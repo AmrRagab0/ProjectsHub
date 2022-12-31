@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:projectshub1/Classes/Project.dart';
 import 'package:projectshub1/Services/database.dart';
+import 'package:provider/provider.dart';
+
+import '../../Classes/Student.dart';
 
 class NewProjectScreen extends StatefulWidget {
   const NewProjectScreen({Key? key}) : super(key: key);
@@ -117,30 +120,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     );
   }
 
-  /*Widget addNewPositionButton() {
-    return GestureDetector(
-      onTap: () {
-        _addNewPosition();
-      },
-      child: Container(
-        width: 50,
-        height: 50,
-        margin: EdgeInsets.only(left: 50, right: 50),
-        padding: EdgeInsets.only(left: 20, right: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(color: Colors.black, width: 2),
-          color: Colors.white,
-        ),
-        child: Center(
-            child: Text(
-          'add Position',
-          style: TextStyle(fontFamily: 'san fran', color: Colors.black),
-        )),
-      ),
-    );
-  }
-  */
   Widget addNewPositionButton() {
     return TextButton(
       child: Text("Add position",
@@ -195,115 +174,136 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(
-          'Create New Project',
-          style: TextStyle(fontWeight: FontWeight.w300, fontFamily: 'san fran'),
-        ),
-      ),
-      body: Form(
-        key: formKey,
-        child: ListView(padding: EdgeInsets.all(10), children: [
-          SizedBox(
-            height: 20,
-          ),
-          buildProjectName(),
-          SizedBox(height: 10),
-          buildProjectDescription(),
-          SizedBox(height: 10),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: const Text(
-              'Looking for',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontFamily: 'san fran',
-                  fontWeight: FontWeight.normal),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          buildPosition(),
-          SizedBox(
-            height: 10,
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemBuilder: (_, index) => positions_widgets[index],
-            itemCount: positions_widgets.length,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              addNewPositionButton(),
-              SizedBox(
-                width: 20,
+    final user = Provider.of<Student?>(context);
+
+    return StreamBuilder<Student>(
+      stream: DatabseService(St_uid: user!.uid).studentStream,
+      builder: ((context, snapshot) {
+        if (snapshot.hasData) {
+          Student me = snapshot.data!;
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              title: Text(
+                'Create New Project',
+                style: TextStyle(
+                    fontWeight: FontWeight.w300, fontFamily: 'san fran'),
               ),
-              removePositionButton(),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: 50,
-            width: 10,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(dark_black),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: dark_black)))),
-              child: GestureDetector(
-                onTap: () {
-                  print('validation : ${formKey.currentState!.validate()}');
-                  if (formKey.currentState!.validate() == true) {
-                    positions_needed = positions_needed.toSet().toList();
-                    Project p = Project(
-                        P_title: Project_name,
-                        P_description: Project_description,
-                        positions_needed: positions_needed,
-                        can_edit: '');
-                    print("positions is :${positions_needed}");
-
-                    DatabseService().storeNewProject(p);
-                    ShowMessage();
-                    print("project is : ${p.positions_needed}");
-
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text(
-                  'Create Project',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontFamily: 'san fran',
-                      fontWeight: FontWeight.normal),
+            ),
+            body: Form(
+              key: formKey,
+              child: ListView(padding: EdgeInsets.all(10), children: [
+                SizedBox(
+                  height: 20,
                 ),
-              ),
+                buildProjectName(),
+                SizedBox(height: 10),
+                buildProjectDescription(),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: const Text(
+                    'Looking for',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontFamily: 'san fran',
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                buildPosition(),
+                SizedBox(
+                  height: 10,
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemBuilder: (_, index) => positions_widgets[index],
+                  itemCount: positions_widgets.length,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    addNewPositionButton(),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    removePositionButton(),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  height: 50,
+                  width: 10,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(dark_black),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side: BorderSide(color: dark_black)))),
+                    child: GestureDetector(
+                      onTap: () {
+                        print(
+                            'validation : ${formKey.currentState!.validate()}');
+                        if (formKey.currentState!.validate() == true) {
+                          positions_needed = positions_needed.toSet().toList();
+                          Project p = Project(
+                              P_title: Project_name,
+                              P_description: Project_description,
+                              positions_needed: positions_needed,
+                              p_owner: me.uid,
+                              member_role: {});
+                          print("positions is :${positions_needed}");
+
+                          DatabseService().storeNewProject(
+                              p, me.First_name, 'Project Owner');
+                          print('member role: ${p.member_role}');
+                          ShowMessage();
+                          print("project is : ${p.positions_needed}");
+
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text(
+                        'Create Project',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'san fran',
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
             ),
-          ),
-        ]),
-      ),
+          );
+        } else {
+          return Container();
+        }
+      }),
     );
   }
 }
 
+/*
 void createNewProject(String p_title, String p_description,
     List<String> positions_needed, String Can_edit) {
   Project NewProject = Project(
       P_title: p_title,
       P_description: p_description,
       positions_needed: positions_needed,
-      can_edit: Can_edit);
+      p_owner: Can_edit);
   return;
 }
+*/

@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       radius: profileHeight / 1.7,
       child: ClipOval(
         child: Image.network(
-          im_url,
+          im_url.substring(0, im_url.length - 6),
           height: (profileHeight / 1.7) * 2,
           width: (profileHeight / 1.7) * 2,
           fit: BoxFit.cover,

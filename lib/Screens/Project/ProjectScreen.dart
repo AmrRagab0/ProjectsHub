@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+//import 'package:projectshub1/Screens/HomeScreen/Components/Project_card.dart';
 
 import 'package:projectshub1/Screens/Project/components.dart';
 
+import '../../Classes/Project.dart';
+
 class ProjectScreen extends StatelessWidget {
   //const ProjectScreen({Key? key}) : super(key: key);
-  String ProjectName = 'ZCSF';
-  String Description =
-      'Zewail city science festival is an event about explaining science concepts in a simple way for every one , every background. the event is bla bla bla ';
-  List positionS = [];
+  Project curr_project;
+
+  ProjectScreen(this.curr_project);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +32,7 @@ class ProjectScreen extends StatelessWidget {
             },
           ),
           backgroundColor: Colors.black,
-          title: heading1_text(ProjectName),
+          title: heading1_text(curr_project.P_title),
         ),
         backgroundColor: Colors.transparent,
         body: Column(children: [
@@ -39,7 +42,7 @@ class ProjectScreen extends StatelessWidget {
               padding: EdgeInsets.all(10),
               //color: Colors.black,
               alignment: Alignment.bottomLeft,
-              child: heading1_text(ProjectName),
+              child: heading1_text(curr_project.P_title),
             ),
           ),
           Expanded(
@@ -66,15 +69,19 @@ class ProjectScreen extends StatelessWidget {
                       'Description',
                     ),
                   ),
-                  normal_text(Description),
+                  normal_text(curr_project.P_description),
                   SizedBox(
                     height: 10,
                   ),
                   Align(
                       alignment: Alignment.centerLeft,
                       child: heading2_text('Needed Positions')),
-                  PositionNeeded('App developer'),
-                  PositionNeeded('App developer'),
+                  Column(
+                    children: [
+                      for (var i in curr_project.positions_needed)
+                        PositionNeeded(curr_project.positions_needed.toString())
+                    ],
+                  ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: heading2_text(

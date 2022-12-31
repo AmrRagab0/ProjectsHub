@@ -41,8 +41,9 @@ class DatabseService {
     return await studentsCollection.doc(S_uid).set(s.saveUserDb(s));
   }
 
-  Future storeNewProject(Project P) async {
+  Future storeNewProject(Project P, String s, String role) async {
     //print('saved: ${P.saveProjectDb(P)}');
+    P.addStudent(s, role);
     return await projectsCollection.add(P.saveProjectDb(P));
   }
 
@@ -87,10 +88,12 @@ class DatabseService {
     return snap.docs.map((doc) {
       //print('doc is: ${doc.data()}');
       return Project(
-          P_title: doc.get('name') ?? '',
-          P_description: doc.get('description') ?? '',
-          positions_needed: doc.get('positions_needed') ?? '',
-          can_edit: doc.get('can edit') ?? '');
+        P_title: doc.get('name') ?? '',
+        P_description: doc.get('description') ?? '',
+        positions_needed: doc.get('positions_needed') ?? '',
+        p_owner: doc.get('Project Owner') ?? '',
+        member_role: doc.get('member-role') ?? {},
+      );
     }).toList();
   }
 }

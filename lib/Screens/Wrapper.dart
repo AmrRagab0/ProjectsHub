@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:projectshub1/Classes/Student.dart';
+import 'package:projectshub1/Screens/Home.dart';
 import 'package:projectshub1/Screens/HomeScreen/HomeScreen.dart';
 import 'package:projectshub1/Screens/Welcome/welcome_screen.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class Wrapper extends StatelessWidget {
     if (user == null) {
       return WelcomeScreen();
     } else {
-      return HomeScreen();
+      return Home();
     }
   }
 }
