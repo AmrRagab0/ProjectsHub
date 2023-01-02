@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_svg/parser.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:projectshub1/Classes/Project.dart';
+import 'package:projectshub1/Classes/info_student.dart';
 import 'package:projectshub1/Services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -262,15 +263,17 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                               P_description: Project_description,
                               positions_needed: positions_needed,
                               p_owner: me.uid,
-                              member_role: {});
-                          print("positions is :${positions_needed}");
+                              member_role: []);
 
-                          DatabseService().storeNewProject(
-                              p, me.First_name, 'Project Owner');
+                          Map sr = {
+                            "uid": me.uid,
+                            "First_name": me.First_name,
+                            "Profile_image": me.Profile_image,
+                            'Role': "Project Owner"
+                          };
+                          DatabseService().storeNewProject(p, sr);
                           print('member role: ${p.member_role}');
                           ShowMessage();
-                          print("project is : ${p.positions_needed}");
-
                           Navigator.pop(context);
                         }
                       },

@@ -29,9 +29,9 @@ Widget heading1_text(String text) {
     text,
     style: TextStyle(
       fontFamily: 'san fran',
-      fontSize: 30,
+      fontSize: 22,
       fontWeight: FontWeight.bold,
-      color: Colors.white,
+      color: Colors.black,
     ),
   );
 }
@@ -47,12 +47,12 @@ Widget profilePicture(imagePath) {
 
 Widget PositionNeeded(String positionName) {
   return Padding(
-    padding: EdgeInsets.all(5),
+    padding: EdgeInsets.only(top: 5, bottom: 5),
     child: Row(
       children: [
         Icon(
           Icons.panorama_fish_eye,
-          size: 15,
+          size: 20,
         ),
         SizedBox(
           width: 10,
@@ -61,12 +61,12 @@ Widget PositionNeeded(String positionName) {
           positionName,
           style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 16,
+              fontSize: 18,
               color: Colors.black,
               fontWeight: FontWeight.bold),
         ),
-        SizedBox(
-          width: 150,
+        Expanded(
+          child: SizedBox(),
         ),
         roundedButton(),
       ],
@@ -76,21 +76,22 @@ Widget PositionNeeded(String positionName) {
 
 Widget roundedButton() {
   return SizedBox(
-    height: 30,
-    width: 70,
+    height: 35,
+    width: 80,
     child: ElevatedButton(
       onPressed: () {},
       style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              Color.fromARGB(255, 10, 51, 121)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
-                  side: BorderSide(color: Colors.blueAccent)))),
+                  side: BorderSide(color: Color.fromARGB(255, 10, 51, 121))))),
       child: Text(
         'Apply',
         style: TextStyle(
             color: Colors.white,
-            fontSize: 14,
+            fontSize: 18,
             fontFamily: 'san fran',
             fontWeight: FontWeight.normal),
       ),
@@ -98,22 +99,20 @@ Widget roundedButton() {
   );
 }
 
-Widget ProjectMember(String name, String PositionName) {
+Widget ProjectMember(String name, String img_url, String PositionName) {
   return Padding(
     padding: const EdgeInsets.all(5.0),
     child: Row(
       children: [
         CircleAvatar(
           radius: 15,
-          backgroundImage: AssetImage('assets/images/profiles/Hashem.jpg'),
+          backgroundImage: NetworkImage(img_url),
         ),
         SizedBox(
           width: 9,
         ),
         MemberText(name),
-        SizedBox(
-          width: 87,
-        ),
+        Expanded(child: SizedBox()),
         MemberPosition(PositionName),
       ],
     ),
@@ -140,3 +139,26 @@ Widget MemberPosition(String text) {
     child: MemberText(text),
   );
 }
+
+/*
+Widget Block(String header, List<String> items) {
+  List<Widget> list = [];
+  for (var i = 0; i < items.length; i++) {
+    list.add(heading2_text(items[i]));
+  }
+  return Container(
+    padding: EdgeInsets.all(5),
+    child: Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: heading1_text(text: header),
+        ),
+        Column(
+          children: [for (var i in items) _oneSkill(i)],
+        )
+      ],
+    ),
+  );
+}
+*/

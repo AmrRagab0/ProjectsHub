@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projectshub1/Classes/Student.dart';
+import 'package:projectshub1/Classes/info_student.dart';
 import 'package:projectshub1/Services/auth.dart';
 import '../Classes/Project.dart';
 
@@ -41,9 +42,10 @@ class DatabseService {
     return await studentsCollection.doc(S_uid).set(s.saveUserDb(s));
   }
 
-  Future storeNewProject(Project P, String s, String role) async {
+  Future storeNewProject(Project P, Map sr) async {
     //print('saved: ${P.saveProjectDb(P)}');
-    P.addStudent(s, role);
+    P.addStudent(sr);
+    print("mem is : ${P.member_role[0]}");
     return await projectsCollection.add(P.saveProjectDb(P));
   }
 
@@ -86,7 +88,7 @@ class DatabseService {
 
   List<Project> _projectsListFromSnapshot(QuerySnapshot snap) {
     return snap.docs.map((doc) {
-      //print('doc is: ${doc.data()}');
+      print('member role type is: ${doc.get('member-role').runtimeType}');
       return Project(
         P_title: doc.get('name') ?? '',
         P_description: doc.get('description') ?? '',

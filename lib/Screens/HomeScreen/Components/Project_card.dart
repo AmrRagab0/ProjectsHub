@@ -9,6 +9,26 @@ class Project_card extends StatelessWidget {
 
   Project_card({required this.theProject});
 
+  Widget membersImages(Project p) {
+    return Row(
+      children: [
+        for (var i in p.member_role)
+          CircleAvatar(
+            radius: 12,
+            backgroundImage: NetworkImage(i['Profile_image']),
+          ),
+      ],
+    );
+  }
+
+  Widget lookingFor_list(List l) {
+    return Row(
+      children: [
+        for (var i in l) PositionNeeded(i),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -76,10 +96,7 @@ class Project_card extends StatelessWidget {
                   Container(
                     height: 25,
                     padding: EdgeInsets.only(left: 3),
-                    child: Row(children: [
-                      PositionNeeded(theProject.positions_needed[0]),
-                      //PositionNeeded(theProject.positions_needed[]),
-                    ]),
+                    child: lookingFor_list(theProject.positions_needed),
                   ),
                   Expanded(
                     child: Container(
@@ -107,19 +124,7 @@ class Project_card extends StatelessWidget {
                             padding: EdgeInsets.only(left: 7),
                             child: Row(
                               children: [
-                                CircleAvatar(
-                                  radius: 12,
-                                  backgroundImage: AssetImage(
-                                      'assets/images/profiles/AG.jpg'),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                CircleAvatar(
-                                  radius: 12,
-                                  backgroundImage: AssetImage(
-                                      'assets/images/profiles/Hashem.jpg'),
-                                ),
+                                membersImages(theProject),
                               ],
                             ),
                           ),

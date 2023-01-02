@@ -24,7 +24,7 @@ class _ProjectListState extends State<ProjectList> {
     final All_projects = Provider.of<List<Project>>(context);
 
     All_projects.sort((a, b) => a.created_on.compareTo(b.created_on));
-    //print('all projects:${All_projects}');
+    print('all projects:${All_projects}');
 
     return ListView.builder(
       itemBuilder: (context, index) {
