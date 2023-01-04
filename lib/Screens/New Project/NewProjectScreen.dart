@@ -266,13 +266,13 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                                     borderRadius: BorderRadius.circular(18.0),
                                     side: BorderSide(color: dark_black)))),
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         print(
                             'validation : ${formKey.currentState!.validate()}');
                         if (formKey.currentState!.validate() == true) {
                           positions_needed = positions_needed.toSet().toList();
                           Project p = Project(
-                              uid: '',
+                              pid: '',
                               P_title: Project_name,
                               P_description: Project_description,
                               positions_needed: positions_needed,
@@ -289,8 +289,9 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                           final result =
                               DatabseService().storeNewProject(p, sr);
                           print('member role: ${p.member_role}');
-                          /*
-                          user.current_projects.add(result as String);
+
+                          user.current_projects.add(await result);
+
                           DatabseService(St_uid: user.uid).updateStudentData(
                               user.uid,
                               user.First_name,
@@ -298,7 +299,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                               user.Email_address,
                               user.Profile_image,
                               user.current_projects);
-                              */
+                          print('current project: ${user.current_projects}');
                           ShowMessage();
                           Navigator.pop(context);
                         }

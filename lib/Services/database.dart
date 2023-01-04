@@ -29,14 +29,14 @@ class DatabseService {
   }
   */
   Future updateStudentData(String S_uid, String first_name, String last_name,
-      String email, String image_url, List<String> Current_Projects) async {
+      String email, String image_url, List<dynamic> Current_Projects) async {
     Student s = Student(
       uid: S_uid,
       First_name: first_name,
       Last_name: last_name,
       Email_address: email,
       Profile_image: image_url,
-      //current_projects: Current_Projects)
+      current_projects: Current_Projects,
     );
 
     //print('this is id:${s.uid}');
@@ -47,13 +47,13 @@ class DatabseService {
   Future<String> storeNewProject(Project P, Map sr) async {
     //print('saved: ${P.saveProjectDb(P)}');
     P.addStudent(sr);
-    print("mem is : ${P.member_role[0]}");
-    final result = await projectsCollection
+    //print("mem is : ${P.member_role[0]}");
+    final String result = await projectsCollection
         .add(P.saveProjectDb(P))
         .then((DocumentSnapshot) {
       return DocumentSnapshot.id.toString();
     });
-    await projectsCollection.doc(result).update({'uid': result});
+    await projectsCollection.doc(result).update({'pid': result});
     print('Result ${result}');
     return result;
   }
@@ -65,6 +65,7 @@ class DatabseService {
       Email_address: snapshot.get('email'),
       Last_name: '',
       Profile_image: snapshot.get('image url'),
+      current_projects: snapshot.get('current projects'),
     );
     //current_projects: snapshot.get('current projects'));
   }
@@ -100,7 +101,7 @@ class DatabseService {
     return snap.docs.map((doc) {
       print('member role type is: ${doc.get('member-role').runtimeType}');
       return Project(
-        uid: doc.get('uid'),
+        pid: doc.get('pid'),
         P_title: doc.get('name') ?? '',
         P_description: doc.get('description') ?? '',
         positions_needed: doc.get('positions_needed') ?? '',

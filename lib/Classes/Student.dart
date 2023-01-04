@@ -14,7 +14,7 @@ class Student {
   ];
   List<String> participated_in = [];
   int phone_num = 010;
-  List<String> current_projects = []; // should contain the ids of projects
+  List<dynamic> current_projects = []; // should contain the ids of projects
 
   Student({
     required this.uid,
@@ -22,12 +22,13 @@ class Student {
     required this.Last_name,
     required this.Email_address,
     required this.Profile_image,
+    required this.current_projects,
   });
   //required this.current_projects});
 
-  //Map addProjectToUser(List newCurrentProjects) {
-  //return {'current projects': newCurrentProjects};
-  // }
+  Map addProjectToUser(List newCurrentProjects) {
+    return {'current projects': newCurrentProjects};
+  }
 
   // save user data
   Map saveUserDb(Student s) {

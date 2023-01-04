@@ -17,7 +17,7 @@ class _MyProjectsState extends State<MyProjects> {
   Widget build(BuildContext context) {
     final All_projects = Provider.of<List<Project>>(context);
     final user = Provider.of<Student?>(context);
-    final List<String> MyProjects_ids = user!.current_projects;
+    //final List<String> MyProjects_ids = user!.current_projects;
 
     return Scaffold(
       body: ListView.builder(

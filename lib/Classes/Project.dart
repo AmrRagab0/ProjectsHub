@@ -4,7 +4,7 @@ import 'Student.dart';
 
 class Project {
   String P_title = "";
-  String uid = "";
+  String pid = "";
   String P_description = "";
   int? num_members = 1;
   List<dynamic> positions_needed;
@@ -16,7 +16,7 @@ class Project {
   String p_owner;
 
   Project({
-    required this.uid,
+    required this.pid,
     required this.P_title,
     required this.P_description,
     required this.positions_needed,
@@ -36,7 +36,7 @@ class Project {
   // add student to project
   void addStudent(Map sr) {
     member_role.add(sr);
-    print('type is :${member_role[0]}');
+    //print('type is :${member_role[0]}');
   }
 
   // remove student to project
@@ -44,7 +44,7 @@ class Project {
   // Store project in firestore
   Map saveProjectDb(Project p) {
     final save_out = {
-      'uid': p.uid,
+      'pid': p.pid,
       'name': p.P_title,
       'description': p.P_description,
       'positions_needed': p.positions_needed,

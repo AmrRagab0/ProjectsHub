@@ -15,6 +15,7 @@ class AuthService {
             Last_name: user.displayName!,
             Email_address: user.email!,
             Profile_image: user.photoURL!,
+            current_projects: [],
           )
         : null;
   }
@@ -61,7 +62,7 @@ class AuthService {
         result.user!.displayName!,
         result.user!.displayName!,
         result.user!.email!,
-        result.user!.photoURL!, []);
+        result.user!.photoURL!, <String>[]);
     return _studentFromFirbaseUser(result.user!);
   }
 
