@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
@@ -26,6 +27,16 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   String can_edit = '';
   List<Widget> positions_widgets = [];
   final formKey = GlobalKey<FormState>();
+
+  List<String> all_images = [
+    'assets/images/Backgrounds/blue.jpg',
+    "assets/images/Backgrounds/darkblue.jpg",
+    "assets/images/Backgrounds/Default.jpg",
+    "assets/images/Backgrounds/lamb.jpg",
+    "assets/images/Backgrounds/purple.jpg",
+    "assets/images/Backgrounds/tree.jpg",
+    "assets/images/Backgrounds/wood.jpg"
+  ];
 
   static const Color dark_black = Color(0xFF000000);
 
@@ -176,6 +187,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
 
   Widget build(BuildContext context) {
     final user = Provider.of<Student?>(context);
+    Random random = new Random();
+    int randomNumber = random.nextInt(6);
 
     return StreamBuilder<Student>(
       stream: DatabseService(St_uid: user!.uid).studentStream,
@@ -259,11 +272,13 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                         if (formKey.currentState!.validate() == true) {
                           positions_needed = positions_needed.toSet().toList();
                           Project p = Project(
+                              uid: '',
                               P_title: Project_name,
                               P_description: Project_description,
                               positions_needed: positions_needed,
                               p_owner: me.uid,
-                              member_role: []);
+                              member_role: [],
+                              P_image: all_images[randomNumber]);
 
                           Map sr = {
                             "uid": me.uid,
@@ -271,8 +286,19 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                             "Profile_image": me.Profile_image,
                             'Role': "Project Owner"
                           };
-                          DatabseService().storeNewProject(p, sr);
+                          final result =
+                              DatabseService().storeNewProject(p, sr);
                           print('member role: ${p.member_role}');
+                          /*
+                          user.current_projects.add(result as String);
+                          DatabseService(St_uid: user.uid).updateStudentData(
+                              user.uid,
+                              user.First_name,
+                              "",
+                              user.Email_address,
+                              user.Profile_image,
+                              user.current_projects);
+                              */
                           ShowMessage();
                           Navigator.pop(context);
                         }

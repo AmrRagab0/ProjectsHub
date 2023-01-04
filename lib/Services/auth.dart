@@ -14,7 +14,8 @@ class AuthService {
             First_name: user.displayName!,
             Last_name: user.displayName!,
             Email_address: user.email!,
-            Profile_image: user.photoURL!)
+            Profile_image: user.photoURL!,
+          )
         : null;
   }
 
@@ -60,7 +61,7 @@ class AuthService {
         result.user!.displayName!,
         result.user!.displayName!,
         result.user!.email!,
-        result.user!.photoURL!);
+        result.user!.photoURL!, []);
     return _studentFromFirbaseUser(result.user!);
   }
 

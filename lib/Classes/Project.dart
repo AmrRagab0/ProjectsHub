@@ -11,16 +11,18 @@ class Project {
   //List<Student>? p_members;
   //List<student_role> member_role = [];
   List<dynamic> member_role = [];
-  String imageName = "Default.jpg";
+  String P_image = "Default.jpg";
   DateTime created_on = DateTime.now();
   String p_owner;
 
   Project({
+    required this.uid,
     required this.P_title,
     required this.P_description,
     required this.positions_needed,
     required this.p_owner,
     required this.member_role,
+    required this.P_image,
   });
 
   // add position to positions list
@@ -49,6 +51,7 @@ class Project {
       'Project Owner': p.p_owner,
       'created on': p.created_on,
       'member-role': p.member_role,
+      'P_image': p.P_image
     };
     //print('final save : ${save_out['member-role']}');
     return save_out;

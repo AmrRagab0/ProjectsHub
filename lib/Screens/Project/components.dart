@@ -101,7 +101,7 @@ Widget roundedButton() {
 
 Widget ProjectMember(String name, String img_url, String PositionName) {
   return Padding(
-    padding: const EdgeInsets.all(5.0),
+    padding: const EdgeInsets.only(left: 1.0, top: 5, bottom: 5, right: 5),
     child: Row(
       children: [
         CircleAvatar(

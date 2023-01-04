@@ -14,10 +14,10 @@ class ProjectScreen extends StatelessWidget {
 
   ProjectScreen(this.curr_project);
 
-  Widget showAllPositions(Project curr_project) {
+  Widget showAllmembers(Project curr_project) {
     List<Widget> memberWidgets = [];
     for (var i in curr_project.member_role) {
-      print("image : ${i['Profile_image']}");
+      //print("image : ${i['Profile_image']}");
       memberWidgets
           .add(ProjectMember(i['First_name'], i['Profile_image'], i['Role']));
     }
@@ -44,7 +44,7 @@ class ProjectScreen extends StatelessWidget {
       body: SlidingUpPanel(
         minHeight: screenHeight * 0.7,
         maxHeight: screenHeight * 0.8,
-        body: buildTop(),
+        body: buildTop(curr_project),
         panelBuilder: (controller) => buildHeader(controller, curr_project),
         parallaxEnabled: true,
         parallaxOffset: 0.5,
@@ -53,10 +53,24 @@ class ProjectScreen extends StatelessWidget {
     );
   }
 
-  Widget buildTop() {
+  Widget buildTop(Project u) {
     return Stack(children: [
       Container(
-        child: Image.asset("assets/images/ZCSF2.jpg"),
+        width: double.infinity,
+        height: 170,
+        alignment: Alignment.center,
+        child: Text(
+          "",
+          style: TextStyle(
+              fontFamily: 'san fran',
+              fontWeight: FontWeight.bold,
+              fontSize: 32,
+              color: Colors.white),
+        ),
+        decoration: BoxDecoration(
+          image:
+              DecorationImage(image: AssetImage(u.P_image), fit: BoxFit.fill),
+        ),
       ),
     ]);
   }
@@ -80,6 +94,9 @@ class ProjectScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 32,
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               Container(
                 padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -110,7 +127,7 @@ class ProjectScreen extends StatelessWidget {
                 child: heading1_text('Members'),
                 alignment: Alignment.centerLeft,
               ),
-              showAllPositions(curr_project),
+              showAllmembers(curr_project),
               //Block('Contact', [u.Email_address]),
               //Block('Skills', u.skills),
             ],

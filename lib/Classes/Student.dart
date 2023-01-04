@@ -1,3 +1,5 @@
+import 'Project.dart';
+
 class Student {
   final String uid;
   late String First_name = '';
@@ -14,12 +16,18 @@ class Student {
   int phone_num = 010;
   List<String> current_projects = []; // should contain the ids of projects
 
-  Student(
-      {required this.uid,
-      required this.First_name,
-      required this.Last_name,
-      required this.Email_address,
-      required this.Profile_image});
+  Student({
+    required this.uid,
+    required this.First_name,
+    required this.Last_name,
+    required this.Email_address,
+    required this.Profile_image,
+  });
+  //required this.current_projects});
+
+  //Map addProjectToUser(List newCurrentProjects) {
+  //return {'current projects': newCurrentProjects};
+  // }
 
   // save user data
   Map saveUserDb(Student s) {
@@ -31,7 +39,7 @@ class Student {
       'skills': s.skills,
       'phone number': s.phone_num,
       'participated in': s.participated_in,
-      'current projects': s.current_projects
+      'current projects': s.current_projects,
     };
     return save_out;
   }

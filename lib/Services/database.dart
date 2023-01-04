@@ -29,24 +29,33 @@ class DatabseService {
   }
   */
   Future updateStudentData(String S_uid, String first_name, String last_name,
-      String email, String image_url) async {
+      String email, String image_url, List<String> Current_Projects) async {
     Student s = Student(
-        uid: S_uid,
-        First_name: first_name,
-        Last_name: last_name,
-        Email_address: email,
-        Profile_image: image_url);
+      uid: S_uid,
+      First_name: first_name,
+      Last_name: last_name,
+      Email_address: email,
+      Profile_image: image_url,
+      //current_projects: Current_Projects)
+    );
 
     //print('this is id:${s.uid}');
     //print(s.saveUserDb(s));
     return await studentsCollection.doc(S_uid).set(s.saveUserDb(s));
   }
 
-  Future storeNewProject(Project P, Map sr) async {
+  Future<String> storeNewProject(Project P, Map sr) async {
     //print('saved: ${P.saveProjectDb(P)}');
     P.addStudent(sr);
     print("mem is : ${P.member_role[0]}");
-    return await projectsCollection.add(P.saveProjectDb(P));
+    final result = await projectsCollection
+        .add(P.saveProjectDb(P))
+        .then((DocumentSnapshot) {
+      return DocumentSnapshot.id.toString();
+    });
+    await projectsCollection.doc(result).update({'uid': result});
+    print('Result ${result}');
+    return result;
   }
 
   Student _getStudentFromDB(DocumentSnapshot snapshot) {
@@ -57,6 +66,7 @@ class DatabseService {
       Last_name: '',
       Profile_image: snapshot.get('image url'),
     );
+    //current_projects: snapshot.get('current projects'));
   }
 
   /*
@@ -90,11 +100,13 @@ class DatabseService {
     return snap.docs.map((doc) {
       print('member role type is: ${doc.get('member-role').runtimeType}');
       return Project(
+        uid: doc.get('uid'),
         P_title: doc.get('name') ?? '',
         P_description: doc.get('description') ?? '',
         positions_needed: doc.get('positions_needed') ?? '',
         p_owner: doc.get('Project Owner') ?? '',
         member_role: doc.get('member-role') ?? {},
+        P_image: doc.get('P_image') ?? '',
       );
     }).toList();
   }

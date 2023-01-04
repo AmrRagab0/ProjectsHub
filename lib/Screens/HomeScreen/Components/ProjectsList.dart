@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter/src/widgets/container.dart';
@@ -12,7 +13,9 @@ import 'package:projectshub1/Classes/Project.dart';
 import 'package:provider/provider.dart';
 
 class ProjectList extends StatefulWidget {
-  const ProjectList({Key? key}) : super(key: key);
+  //const ProjectList({Key? key}) : super(key: key);
+  //List<Project> All_projects;
+  //ProjectList(this.All_projects);
 
   @override
   State<ProjectList> createState() => _ProjectListState();

@@ -35,6 +35,26 @@ class _HomeScreenState extends State<HomeScreen> {
       initialData: [],
       child: Container(
         child: Scaffold(
+          appBar: AppBar(
+            title: Center(
+              child: Text(
+                "Projects Hub",
+                style: TextStyle(
+                  fontFamily: 'san fran',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    showSearch(
+                        context: context, delegate: CustomSearchDelegate([]));
+                  },
+                  icon: Icon(Icons.search))
+            ],
+            backgroundColor: Colors.black,
+          ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(
@@ -60,6 +80,62 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  List<Project> All_projects;
+
+  CustomSearchDelegate(this.All_projects);
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+          onPressed: () {
+            query = '';
+          },
+          icon: Icon(Icons.clear))
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          close(context, null);
+        },
+        icon: Icon(Icons.arrow_back));
+  }
+
+  Widget buildResults(BuildContext context) {
+    List matchQuery = [];
+    for (var project in All_projects) {
+      if (project.P_title.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(project);
+      }
+    }
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return Project_card(theProject: matchQuery[index]);
+      },
+      itemCount: matchQuery.length,
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List matchQuery = [];
+    for (var project in All_projects) {
+      if (project.P_title.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(project);
+      }
+    }
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return Project_card(theProject: matchQuery[index]);
+      },
+      itemCount: matchQuery.length,
     );
   }
 }

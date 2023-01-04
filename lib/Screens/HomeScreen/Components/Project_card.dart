@@ -24,7 +24,7 @@ class Project_card extends StatelessWidget {
   Widget lookingFor_list(List l) {
     return Row(
       children: [
-        for (var i in l) PositionNeeded(i),
+        for (var i in l.take(3)) PositionNeeded(i),
       ],
     );
   }
@@ -45,13 +45,13 @@ class Project_card extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         elevation: 7,
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.all(7),
         child: Stack(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
-                'assets/images/${theProject.imageName}',
+                "${theProject.P_image}",
                 width: MediaQuery.of(context).size.width,
                 height: 170,
                 fit: BoxFit.fill,
@@ -75,7 +75,7 @@ class Project_card extends StatelessWidget {
             Positioned(
               top: 65,
               height: 109,
-              width: 357,
+              width: 383,
               //width: MediaQuery.of(context).size.width * 0.8,
               child: Card(
                 color: Colors.white,
@@ -172,14 +172,17 @@ class PositionNeeded extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              Icons.panorama_fish_eye,
-              size: 15,
+              Icons.circle_outlined,
+              size: 13,
+            ),
+            SizedBox(
+              width: 4,
             ),
             Text(
               title,
               style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: 12,
+                  fontSize: 10,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
