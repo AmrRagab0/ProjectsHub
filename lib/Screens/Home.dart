@@ -5,6 +5,7 @@ import 'package:projectshub1/Classes/Project.dart';
 import 'package:projectshub1/Screens/HomeScreen/Components/ProjectsList.dart';
 import 'package:projectshub1/Screens/HomeScreen/HomeScreen.dart';
 import 'package:projectshub1/Screens/Menu/Menu.dart';
+import 'package:projectshub1/Screens/MyProjects/MyProjects.dart';
 import 'package:projectshub1/Screens/New%20Project/NewProjectScreen.dart';
 import 'package:projectshub1/Screens/Profile/ProfileScreen.dart';
 import 'package:projectshub1/Screens/Profile/editProfile.dart';
@@ -31,7 +32,7 @@ class _HomeState extends State<Home> {
   final screens = [
     HomeScreen(),
     //ProjectScreen(Project ),
-    Menu(),
+    MyProjects(),
     Menu(),
     ProfileScreen(),
   ];
@@ -66,37 +67,25 @@ class _HomeState extends State<Home> {
               GButton(
                 icon: Icons.lightbulb_outline,
                 text: "My Projects",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext Context) => Menu(),
-                    ),
-                  );
-                },
+                onPressed: () {},
               ),
               GButton(
                 icon: Icons.circle_notifications,
                 text: 'Notifications',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext Context) => editProfile(),
-                    ),
-                  );
-                },
+                onPressed: () {},
               ),
               GButton(
                 icon: Icons.person_outline,
                 text: "Profile",
                 onPressed: () {
+                  /*
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (BuildContext Context) => ProfileScreen(),
+                      builder: (BuildContext Context) => screens[current_index],
                     ),
                   );
+                  */
                 },
               ),
             ],

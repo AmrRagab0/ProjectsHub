@@ -325,15 +325,3 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     );
   }
 }
-
-/*
-void createNewProject(String p_title, String p_description,
-    List<String> positions_needed, String Can_edit) {
-  Project NewProject = Project(
-      P_title: p_title,
-      P_description: p_description,
-      positions_needed: positions_needed,
-      p_owner: Can_edit);
-  return;
-}
-*/

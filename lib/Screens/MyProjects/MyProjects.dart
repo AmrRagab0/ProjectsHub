@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:projectshub1/Screens/MyProjects/MyProjectsList.dart';
 import 'package:provider/provider.dart';
 import 'package:projectshub1/Classes/Project.dart';
 
 import '../../Classes/Student.dart';
+import '../../Services/database.dart';
 import '../HomeScreen/Components/Project_card.dart';
 
 class MyProjects extends StatefulWidget {
@@ -15,16 +17,31 @@ class MyProjects extends StatefulWidget {
 class _MyProjectsState extends State<MyProjects> {
   @override
   Widget build(BuildContext context) {
-    final All_projects = Provider.of<List<Project>>(context);
-    final user = Provider.of<Student?>(context);
-    //final List<String> MyProjects_ids = user!.current_projects;
-
-    return Scaffold(
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return Project_card(theProject: All_projects[index]);
-        },
-        itemCount: All_projects.length,
+    Size size = MediaQuery.of(context).size;
+    return StreamProvider<List<Project>>.value(
+      value: DatabseService().projectStream,
+      initialData: [],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Center(
+            child: Text(
+              "Projects Hub",
+              style: TextStyle(
+                fontFamily: 'san fran',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
+          backgroundColor: Colors.black,
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            height: size.height,
+            width: size.width,
+            child: MyProjectsList(),
+          ),
+        ),
       ),
     );
   }

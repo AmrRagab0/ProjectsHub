@@ -26,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final user = Provider.of<Student?>(context);
+
     const blackA = Colors.black;
     return Scaffold(
       appBar: AppBar(
