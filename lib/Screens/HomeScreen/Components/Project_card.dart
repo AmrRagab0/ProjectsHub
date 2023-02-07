@@ -3,6 +3,9 @@ import 'package:flutter/rendering.dart';
 import 'package:projectshub1/Classes/Project.dart';
 import 'package:projectshub1/Screens/Profile/ProfileScreen.dart';
 import 'package:projectshub1/Screens/Project/ProjectScreen.dart';
+import 'package:projectshub1/Screens/Project/AdminProjectScreen.dart';
+import 'package:projectshub1/Services/database.dart';
+import '../../../Classes/Student.dart';
 
 class Project_card extends StatelessWidget {
   late Project theProject;
@@ -31,114 +34,120 @@ class Project_card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext Context) => ProjectScreen(this.theProject),
-          ),
-        );
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        elevation: 7,
-        margin: EdgeInsets.all(7),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                "${theProject.P_image}",
-                width: MediaQuery.of(context).size.width,
-                height: 170,
-                fit: BoxFit.fill,
+    return StreamBuilder<Student>(
+        stream: DatabseService().studentStream,
+        builder: (context, snapshot) {
+          Student? S = snapshot.data;
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext Context) =>
+                      ProjectScreen(this.theProject),
+                ),
+              );
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [
-                        Colors.black.withOpacity(0),
-                        Colors.black.withOpacity(0.8)
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0.6, 1])),
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: CardText(theProject.P_title),
-              height: 70,
-              alignment: Alignment.bottomLeft,
-            ),
-            Positioned(
-              top: 65,
-              height: 109,
-              width: 383,
-              //width: MediaQuery.of(context).size.width * 0.8,
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.only(left: 10, top: 5),
-                    child: Text(
-                      "Looking for",
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'san fran',
-                          fontWeight: FontWeight.normal),
+              elevation: 7,
+              margin: EdgeInsets.all(7),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      "${theProject.P_image}",
+                      width: MediaQuery.of(context).size.width,
+                      height: 170,
+                      fit: BoxFit.fill,
                     ),
                   ),
                   Container(
-                    height: 25,
-                    padding: EdgeInsets.only(left: 3),
-                    child: lookingFor_list(theProject.positions_needed),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withOpacity(0),
+                              Colors.black.withOpacity(0.8)
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [0.6, 1])),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: CardText(theProject.P_title),
+                    height: 70,
+                    alignment: Alignment.bottomLeft,
                   ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.bottomLeft,
-                      padding: EdgeInsets.only(bottom: 7),
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                              left: 9,
-                              top: 8,
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              'Members',
-                              style: TextStyle(
-                                fontFamily: 'san fran',
-                                fontWeight: FontWeight.normal,
+                  Positioned(
+                    top: 65,
+                    height: 109,
+                    width: 383,
+                    //width: MediaQuery.of(context).size.width * 0.8,
+                    child: Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(left: 10, top: 5),
+                          child: Text(
+                            "Looking for",
+                            style: TextStyle(
                                 fontSize: 12,
-                              ),
-                            ),
+                                fontFamily: 'san fran',
+                                fontWeight: FontWeight.normal),
                           ),
-                          Container(
-                            padding: EdgeInsets.only(left: 7),
-                            child: Row(
+                        ),
+                        Container(
+                          height: 25,
+                          padding: EdgeInsets.only(left: 3),
+                          child: lookingFor_list(theProject.positions_needed),
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.bottomLeft,
+                            padding: EdgeInsets.only(bottom: 7),
+                            child: Column(
                               children: [
-                                membersImages(theProject),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.only(
+                                    left: 9,
+                                    top: 8,
+                                    bottom: 4,
+                                  ),
+                                  child: Text(
+                                    'Members',
+                                    style: TextStyle(
+                                      fontFamily: 'san fran',
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 7),
+                                  child: Row(
+                                    children: [
+                                      membersImages(theProject),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ]),
                     ),
-                  ),
-                ]),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          );
+        });
   }
 }
 

@@ -1,6 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:projectshub1/Services/database.dart';
+import '../../Classes/request.dart';
+import '../../Classes/Student.dart';
 
 Widget heading2_text(String text) {
   return Text(
@@ -24,6 +25,60 @@ Widget normal_text(String text) {
   );
 }
 
+Widget editableText(bool edit, TextEditingController textEditor) {
+  if (edit) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Flexible(child: heading1_text('Edit Description')),
+            IconButton(
+              onPressed: () {
+                setState() {
+                  edit = false;
+                  print('a');
+                }
+              },
+              icon: Icon(Icons.save),
+            )
+          ],
+        ),
+        TextField(
+          controller: textEditor,
+          onChanged: ((value) {
+            setState() {
+              textEditor.text = value;
+            }
+          }),
+        ),
+      ],
+    );
+  } else {
+    return Column(
+      children: [
+        Row(
+          children: [
+            heading1_text('Description'),
+            IconButton(
+              onPressed: () {
+                setState() {
+                  edit = false;
+                  print('a');
+                }
+              },
+              icon: Icon(Icons.edit_note),
+            )
+          ],
+        ),
+        Text(
+          textEditor.text,
+          style: TextStyle(fontFamily: 'san fran', fontSize: 18),
+        ),
+      ],
+    );
+  }
+}
+
 Widget heading1_text(String text) {
   return Text(
     text,
@@ -45,7 +100,8 @@ Widget profilePicture(imagePath) {
   );
 }
 
-Widget PositionNeeded(String positionName) {
+Widget PositionNeeded(
+    String positionName, String text, Student st, String proj_id) {
   return Padding(
     padding: EdgeInsets.only(top: 5, bottom: 5),
     child: Row(
@@ -68,18 +124,29 @@ Widget PositionNeeded(String positionName) {
         Expanded(
           child: SizedBox(),
         ),
-        roundedButton(),
+        roundedButton(text, positionName, st, proj_id),
       ],
     ),
   );
 }
 
-Widget roundedButton() {
+Widget roundedButton(
+    String text, String positionName, Student st, String proj_id) {
   return SizedBox(
     height: 35,
     width: 80,
     child: ElevatedButton(
-      onPressed: () {},
+      onPressed: () async {
+        final request r = request(
+            Stuid: st.uid,
+            stu_name: st.First_name,
+            proj_id: proj_id,
+            position_name: positionName);
+        final result = DatabseService(St_uid: st.uid).storeNewRequest(r);
+
+        // notify the owner of the project
+        final res = DatabseService(St_uid: st.uid).Notify_proj_owner(r);
+      },
       style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(
               Color.fromARGB(255, 10, 51, 121)),
@@ -87,11 +154,68 @@ Widget roundedButton() {
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                   side: BorderSide(color: Color.fromARGB(255, 10, 51, 121))))),
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontFamily: 'san fran',
+              fontWeight: FontWeight.normal),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget adminPositionsNeeded(String positionName, String text) {
+  return Padding(
+    padding: EdgeInsets.only(top: 5, bottom: 5),
+    child: Row(
+      children: [
+        Icon(
+          Icons.panorama_fish_eye,
+          size: 20,
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Flexible(
+          fit: FlexFit.tight, // FUCK, IT FINALLY WORKS
+          child: Text(
+            positionName,
+            style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 18,
+                color: Colors.black,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          child: SizedBox(),
+        ),
+        flexRoundButton(text),
+      ],
+    ),
+  );
+}
+
+Widget flexRoundButton(String text) {
+  return ElevatedButton(
+    onPressed: () {},
+    style: ButtonStyle(
+        backgroundColor:
+            MaterialStateProperty.all<Color>(Color.fromARGB(255, 10, 51, 121)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+                side: BorderSide(color: Color.fromARGB(255, 10, 51, 121))))),
+    child: Center(
       child: Text(
-        'Apply',
+        text,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: 15,
             fontFamily: 'san fran',
             fontWeight: FontWeight.normal),
       ),
@@ -140,25 +264,31 @@ Widget MemberPosition(String text) {
   );
 }
 
-/*
-Widget Block(String header, List<String> items) {
-  List<Widget> list = [];
-  for (var i = 0; i < items.length; i++) {
-    list.add(heading2_text(items[i]));
-  }
-  return Container(
-    padding: EdgeInsets.all(5),
-    child: Column(
-      children: [
-        Align(
+Widget editBlock(String text) {
+  return Column(
+    children: [
+      Row(
+        children: [
+          Align(
+            child: heading1_text('Description'),
+            alignment: Alignment.centerLeft,
+          ),
+          IconButton(onPressed: () {}, icon: Icon(Icons.edit))
+        ],
+      ),
+      Container(
+        padding: EdgeInsets.only(top: 10, bottom: 10),
+        child: Align(
           alignment: Alignment.centerLeft,
-          child: heading1_text(text: header),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontFamily: 'san fran',
+              fontSize: 18,
+            ),
+          ),
         ),
-        Column(
-          children: [for (var i in items) _oneSkill(i)],
-        )
-      ],
-    ),
+      ),
+    ],
   );
 }
-*/

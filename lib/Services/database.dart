@@ -4,6 +4,7 @@ import 'package:projectshub1/Classes/Student.dart';
 import 'package:projectshub1/Classes/info_student.dart';
 import 'package:projectshub1/Services/auth.dart';
 import '../Classes/Project.dart';
+import '../Classes/request.dart';
 
 class DatabseService {
   String? P_uid;
@@ -20,6 +21,9 @@ class DatabseService {
 
   final CollectionReference projectsCollection =
       FirebaseFirestore.instance.collection('Projects');
+
+  final CollectionReference requestsCollection =
+      FirebaseFirestore.instance.collection('Requests');
 
   /*
   Future updateUserData(
@@ -38,9 +42,13 @@ class DatabseService {
       Profile_image: image_url,
       current_projects: Current_Projects,
     );
-
+    print('should creeate notification page');
+    await requestsCollection.doc(S_uid).set({
+      'notifications': [{}]
+    });
     //print('this is id:${s.uid}');
     //print(s.saveUserDb(s));
+
     return await studentsCollection.doc(S_uid).set(s.saveUserDb(s));
   }
 
@@ -58,6 +66,43 @@ class DatabseService {
     return result;
   }
 
+  Future<String> storeNewRequest(request r) async {
+    var snapshot = await requestsCollection.doc(r.Stuid).get();
+    if (snapshot.exists) {
+      print('snap shot: ${snapshot.get('notifications')}');
+      List<dynamic> all_notifications = snapshot.get('notifications');
+
+      all_notifications.add(r.SaveReqDB(r));
+      await requestsCollection
+          .doc(r.Stuid)
+          .set({'notifications': all_notifications});
+    } else {
+      List<dynamic> all = [];
+      all.add(r.SaveReqDB(r));
+      print('all ya hamada:${r.SaveReqDB(r).runtimeType}');
+
+      await requestsCollection.doc(r.Stuid).set({'notifications': all});
+    }
+    //await requestsCollection.doc(r.Stuid).update();
+
+    return 'done';
+  }
+
+  Future<String> Notify_proj_owner(request r) async {
+    var snapshot = await projectsCollection.doc(r.proj_id).get();
+    String P_owner = snapshot.get('Project Owner');
+    var owner_notif = await requestsCollection.doc(P_owner).get();
+    List<dynamic> all_notifications = owner_notif.get('notifications');
+
+    all_notifications.add(r.SaveReqDB(r));
+    print('all${all_notifications}');
+    await requestsCollection
+        .doc(P_owner)
+        .set({'notifications': all_notifications});
+
+    return 's';
+  }
+
   Student _getStudentFromDB(DocumentSnapshot snapshot) {
     return Student(
       uid: St_uid!,
@@ -69,24 +114,6 @@ class DatabseService {
     );
     //current_projects: snapshot.get('current projects'));
   }
-
-  /*
-  // list all availabe projects to use for the home screen
-  List<Project> allProjects_from_snapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return Project(
-          P_title: doc.get('P_title') ?? " ",
-          P_description: doc.get('P_description') ?? " ",
-          positions_needed: doc.get('positions_needed') ?? " ");
-    }).toList();
-  }
-  
-  Stream<List<Student>> get all_students {
-    return rootCollection
-        .snapshots()
-        .map((event) => allProjects_from_snapshot(event));
-  }
-  */
 
   // returns the student document from firestore
   Stream<Student> get studentStream {
@@ -111,13 +138,8 @@ class DatabseService {
       );
     }).toList();
   }
+
+  void deleteProject(id) {
+    projectsCollection.doc(id).delete();
+  }
 }
-
-
-/*
-class projectsProvider with ChangeNotifier {
-  //late List<Project> _All_Projects;
-
-  //List<Project> get All_Projects => _All_Projects;
-}
-*/

@@ -5,15 +5,22 @@ import 'package:flutter/material.dart';
 
 import 'package:projectshub1/Screens/Project/components.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
+import 'package:provider/provider.dart';
 import '../../Classes/Project.dart';
+import '../../Classes/Student.dart';
+import '../../Services/database.dart';
 
-class ProjectScreen extends StatelessWidget {
+class ProjectScreen extends StatefulWidget {
   //const ProjectScreen({Key? key}) : super(key: key);
   Project curr_project;
 
   ProjectScreen(this.curr_project);
 
+  @override
+  State<ProjectScreen> createState() => _ProjectScreenState();
+}
+
+class _ProjectScreenState extends State<ProjectScreen> {
   Widget showAllmembers(Project curr_project) {
     List<Widget> memberWidgets = [];
     for (var i in curr_project.member_role) {
@@ -29,28 +36,40 @@ class ProjectScreen extends StatelessWidget {
     );
   }
 
+  void apply_process() {}
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     //Map<String, String> memberRole = curr_project.member_role
     //  .map((key, value) => MapEntry(key.First_name, value));
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Project Details'),
-        centerTitle: true,
-        backgroundColor: Colors.black,
-      ),
-      body: SlidingUpPanel(
-        minHeight: screenHeight * 0.7,
-        maxHeight: screenHeight * 0.8,
-        body: buildTop(curr_project),
-        panelBuilder: (controller) => buildHeader(controller, curr_project),
-        parallaxEnabled: true,
-        parallaxOffset: 0.5,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-    );
+    final user = Provider.of<Student?>(context);
+    return StreamBuilder<Student>(
+        stream: DatabseService(St_uid: user!.uid).studentStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Student me = snapshot.data!;
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Project Details'),
+                centerTitle: true,
+                backgroundColor: Colors.black,
+              ),
+              body: SlidingUpPanel(
+                minHeight: screenHeight * 0.7,
+                maxHeight: screenHeight * 0.8,
+                body: buildTop(widget.curr_project),
+                panelBuilder: (controller) =>
+                    buildHeader(controller, widget.curr_project, me),
+                parallaxEnabled: true,
+                parallaxOffset: 0.5,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 
   Widget buildTop(Project u) {
@@ -75,7 +94,7 @@ class ProjectScreen extends StatelessWidget {
     ]);
   }
 
-  Widget buildHeader(ScrollController cont, Project u) {
+  Widget buildHeader(ScrollController cont, Project u, Student st) {
     return ListView(
       controller: cont,
       children: [
@@ -97,6 +116,10 @@ class ProjectScreen extends StatelessWidget {
               ),
               SizedBox(
                 height: 10,
+              ),
+              Align(
+                child: heading1_text('Description'),
+                alignment: Alignment.centerLeft,
               ),
               Container(
                 padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -120,14 +143,15 @@ class ProjectScreen extends StatelessWidget {
               ),
               Column(
                 children: [
-                  for (var i in curr_project.positions_needed) PositionNeeded(i)
+                  for (var i in widget.curr_project.positions_needed)
+                    PositionNeeded(i, 'Apply', st, u.pid)
                 ],
               ),
               Align(
                 child: heading1_text('Members'),
                 alignment: Alignment.centerLeft,
               ),
-              showAllmembers(curr_project),
+              showAllmembers(widget.curr_project),
               //Block('Contact', [u.Email_address]),
               //Block('Skills', u.skills),
             ],

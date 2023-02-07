@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import '../../Screens/Project/AdminProjectScreen.dart';
 import 'package:projectshub1/Services/database.dart';
 import 'package:provider/provider.dart';
 import '../../Classes/Student.dart';
@@ -55,14 +56,3 @@ class _MyProjectsListState extends State<MyProjectsList> {
     );
   }
 }
-
-
-
-/*
-ListView.builder(
-            itemBuilder: (context, index) {
-              return Project_card(theProject: All_projects[index]);
-            },
-            itemCount: All_projects.length,
-          );
-          */

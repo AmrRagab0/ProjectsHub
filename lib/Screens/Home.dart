@@ -7,6 +7,7 @@ import 'package:projectshub1/Screens/HomeScreen/HomeScreen.dart';
 import 'package:projectshub1/Screens/Menu/Menu.dart';
 import 'package:projectshub1/Screens/MyProjects/MyProjects.dart';
 import 'package:projectshub1/Screens/New%20Project/NewProjectScreen.dart';
+import 'package:projectshub1/Screens/Notifications/NotificationsScreen.dart';
 import 'package:projectshub1/Screens/Profile/ProfileScreen.dart';
 import 'package:projectshub1/Screens/Profile/editProfile.dart';
 import 'package:projectshub1/Screens/Profile/profile.dart';
@@ -33,7 +34,7 @@ class _HomeState extends State<Home> {
     HomeScreen(),
     //ProjectScreen(Project ),
     MyProjects(),
-    Menu(),
+    NotificationsScreen(),
     ProfileScreen(),
   ];
 
