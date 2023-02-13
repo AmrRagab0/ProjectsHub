@@ -36,7 +36,6 @@ Widget editableText(bool edit, TextEditingController textEditor) {
               onPressed: () {
                 setState() {
                   edit = false;
-                  print('a');
                 }
               },
               icon: Icon(Icons.save),
@@ -100,8 +99,8 @@ Widget profilePicture(imagePath) {
   );
 }
 
-Widget PositionNeeded(
-    String positionName, String text, Student st, String proj_id) {
+Widget PositionNeeded(String positionName, String text, Student st,
+    String proj_id, String proj_name) {
   return Padding(
     padding: EdgeInsets.only(top: 5, bottom: 5),
     child: Row(
@@ -124,14 +123,14 @@ Widget PositionNeeded(
         Expanded(
           child: SizedBox(),
         ),
-        roundedButton(text, positionName, st, proj_id),
+        roundedButton(text, positionName, st, proj_id, proj_name),
       ],
     ),
   );
 }
 
-Widget roundedButton(
-    String text, String positionName, Student st, String proj_id) {
+Widget roundedButton(String text, String positionName, Student st,
+    String proj_id, String proj_name) {
   return SizedBox(
     height: 35,
     width: 80,
@@ -141,6 +140,7 @@ Widget roundedButton(
             Stuid: st.uid,
             stu_name: st.First_name,
             proj_id: proj_id,
+            proj_name: proj_name,
             position_name: positionName);
         final result = DatabseService(St_uid: st.uid).storeNewRequest(r);
 

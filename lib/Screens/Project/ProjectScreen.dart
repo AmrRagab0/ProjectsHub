@@ -144,7 +144,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
               Column(
                 children: [
                   for (var i in widget.curr_project.positions_needed)
-                    PositionNeeded(i, 'Apply', st, u.pid)
+                    PositionNeeded(i, 'Apply', st, u.pid, u.P_title)
                 ],
               ),
               Align(

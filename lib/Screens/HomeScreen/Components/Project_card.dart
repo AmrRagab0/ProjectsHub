@@ -27,7 +27,7 @@ class Project_card extends StatelessWidget {
   Widget lookingFor_list(List l) {
     return Row(
       children: [
-        for (var i in l.take(3)) PositionNeeded(i),
+        for (var i in l.take(3)) Flexible(child: PositionNeeded(i)),
       ],
     );
   }
@@ -187,13 +187,15 @@ class PositionNeeded extends StatelessWidget {
             SizedBox(
               width: 4,
             ),
-            Text(
-              title,
-              style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 10,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
+            Flexible(
+              child: Text(
+                title,
+                style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 10,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),

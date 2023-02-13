@@ -42,10 +42,20 @@ class DatabseService {
       Profile_image: image_url,
       current_projects: Current_Projects,
     );
-    print('should creeate notification page');
-    await requestsCollection.doc(S_uid).set({
-      'notifications': [{}]
-    });
+
+    ///print('should creeate notification page');
+
+    DocumentSnapshot documentSnapshot =
+        await requestsCollection.doc(S_uid).get();
+    if (documentSnapshot.exists) {
+      // do nothing
+
+    } else {
+      await requestsCollection.doc(S_uid).set({
+        'notifications': [{}]
+      });
+    }
+
     //print('this is id:${s.uid}');
     //print(s.saveUserDb(s));
 
@@ -62,7 +72,7 @@ class DatabseService {
       return DocumentSnapshot.id.toString();
     });
     await projectsCollection.doc(result).update({'pid': result});
-    print('Result ${result}');
+    //print('Result ${result}');
     return result;
   }
 
@@ -71,21 +81,49 @@ class DatabseService {
     if (snapshot.exists) {
       print('snap shot: ${snapshot.get('notifications')}');
       List<dynamic> all_notifications = snapshot.get('notifications');
-
+      print('found requests');
       all_notifications.add(r.SaveReqDB(r));
       await requestsCollection
           .doc(r.Stuid)
           .set({'notifications': all_notifications});
     } else {
+      print('didnt find requests');
       List<dynamic> all = [];
       all.add(r.SaveReqDB(r));
-      print('all ya hamada:${r.SaveReqDB(r).runtimeType}');
+      //print('all ya hamada:${r.SaveReqDB(r).runtimeType}');
 
       await requestsCollection.doc(r.Stuid).set({'notifications': all});
     }
     //await requestsCollection.doc(r.Stuid).update();
 
     return 'done';
+  }
+
+  Stream<List<dynamic>> getData(String uid) {
+    return requestsCollection.doc(uid).snapshots().map(convertSnapToReqs);
+  }
+
+  List<dynamic> convertSnapToReqs(DocumentSnapshot snapshot) {
+    List<dynamic> all_notifications = [];
+    if (snapshot.exists) {
+      print('found it');
+      List<dynamic> data_full = snapshot.get('notifications');
+      List<dynamic> data = data_full.skip(1).toList();
+      var thedata = data.reversed;
+      var dd = thedata.map((e) => e as Map<String, dynamic>).toList();
+      for (var i in dd) {
+        all_notifications.add(request(
+            Stuid: i['stuid'],
+            stu_name: i['stu_name'],
+            proj_id: i['proj_id'],
+            proj_name: i['proj_name'],
+            position_name: i['position_name']));
+      }
+      print('el list:${all_notifications}');
+      return all_notifications;
+    } else {
+      return [];
+    }
   }
 
   Future<String> Notify_proj_owner(request r) async {
@@ -105,7 +143,7 @@ class DatabseService {
 
   Student _getStudentFromDB(DocumentSnapshot snapshot) {
     return Student(
-      uid: St_uid!,
+      uid: 'j',
       First_name: snapshot.get('name'),
       Email_address: snapshot.get('email'),
       Last_name: '',
@@ -126,7 +164,7 @@ class DatabseService {
 
   List<Project> _projectsListFromSnapshot(QuerySnapshot snap) {
     return snap.docs.map((doc) {
-      print('member role type is: ${doc.get('member-role').runtimeType}');
+      //print('member role type is: ${doc.get('member-role').runtimeType}');
       return Project(
         pid: doc.get('pid'),
         P_title: doc.get('name') ?? '',
@@ -139,7 +177,48 @@ class DatabseService {
     }).toList();
   }
 
+  Project _getProjectFromDB(DocumentSnapshot snap) {
+    //print('member role type is: ${doc.get('member-role').runtimeType}');
+    return Project(
+      pid: snap.get('pid'),
+      P_title: snap.get('name') ?? '',
+      P_description: snap.get('description') ?? '',
+      positions_needed: snap.get('positions_needed') ?? '',
+      p_owner: snap.get('Project Owner') ?? '',
+      member_role: snap.get('member-role') ?? {},
+      P_image: snap.get('P_image') ?? '',
+    );
+  }
+
   void deleteProject(id) {
     projectsCollection.doc(id).delete();
+  }
+
+  void deleteRequest(id) {
+    requestsCollection.doc(id).delete();
+  }
+
+  Future<void> addStudentToProject_db(
+      String stuid, String position, String proj_id) async {
+    // get student full data
+    DocumentSnapshot st_snap = await studentsCollection.doc(stuid).get();
+
+    Student st = _getStudentFromDB(st_snap);
+    // get project data
+    var proj_snap = await projectsCollection.doc(proj_id).get();
+    Project pr = _getProjectFromDB(proj_snap);
+
+    Map sr = {
+      "First_name": st.First_name,
+      "Profile_image": st.Profile_image,
+      "Role": position,
+      "uid": st.uid
+    };
+    // add student to project
+    pr.addStudent(sr);
+    // update project doc in the database
+    await projectsCollection
+        .doc(proj_id)
+        .update(pr.saveProjectDb(pr) as Map<String, dynamic>);
   }
 }

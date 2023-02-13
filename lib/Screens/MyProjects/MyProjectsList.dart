@@ -36,7 +36,7 @@ class _MyProjectsListState extends State<MyProjectsList> {
             if (me.current_projects.contains(p.pid)) {
               if (MyProjects.contains(p) != true) {
                 MyProjects.add(p);
-                print('added');
+                //print('added');
               }
             }
           }
