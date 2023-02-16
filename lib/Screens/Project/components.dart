@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projectshub1/Services/database.dart';
 import '../../Classes/request.dart';
 import '../../Classes/Student.dart';
+import 'package:uuid/uuid.dart';
 
 Widget heading2_text(String text) {
   return Text(
@@ -100,37 +101,35 @@ Widget profilePicture(imagePath) {
 }
 
 Widget PositionNeeded(String positionName, String text, Student st,
-    String proj_id, String proj_name) {
-  return Padding(
-    padding: EdgeInsets.only(top: 5, bottom: 5),
-    child: Row(
-      children: [
-        Icon(
-          Icons.panorama_fish_eye,
-          size: 20,
-        ),
-        SizedBox(
-          width: 10,
-        ),
-        Text(
-          positionName,
-          style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 18,
-              color: Colors.black,
-              fontWeight: FontWeight.bold),
-        ),
-        Expanded(
-          child: SizedBox(),
-        ),
-        roundedButton(text, positionName, st, proj_id, proj_name),
-      ],
-    ),
+    String proj_id, String proj_name, String proj_owner_id) {
+  return Row(
+    children: [
+      Icon(
+        Icons.panorama_fish_eye,
+        size: 20,
+      ),
+      SizedBox(
+        width: 10,
+      ),
+      Text(
+        positionName,
+        style: TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 18,
+            color: Colors.black,
+            fontWeight: FontWeight.bold),
+      ),
+      Expanded(
+        child: SizedBox(),
+      ),
+      roundedButton(text, positionName, st, proj_id, proj_name, proj_owner_id),
+    ],
   );
 }
 
 Widget roundedButton(String text, String positionName, Student st,
-    String proj_id, String proj_name) {
+    String proj_id, String proj_name, String proj_owner_id) {
+  var uuid = Uuid();
   return SizedBox(
     height: 35,
     width: 80,
@@ -138,9 +137,12 @@ Widget roundedButton(String text, String positionName, Student st,
       onPressed: () async {
         final request r = request(
             Stuid: st.uid,
+            rid: uuid.v4(),
             stu_name: st.First_name,
             proj_id: proj_id,
+            proj_owner_id: proj_owner_id,
             proj_name: proj_name,
+            req_status: status.wait_to_join,
             position_name: positionName);
         final result = DatabseService(St_uid: st.uid).storeNewRequest(r);
 

@@ -1,16 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:projectshub1/Classes/request.dart';
 import 'package:projectshub1/Services/database.dart';
+import 'package:projectshub1/variables.dart';
 import 'package:provider/provider.dart';
 import '../../Classes/Student.dart';
 import './components.dart';
 
+//enum status { Accepted, Rejected, wait_to_join }
 class NotifItem extends StatefulWidget {
   request Req;
+
   NotifItem(this.Req);
 
   @override
@@ -18,8 +23,15 @@ class NotifItem extends StatefulWidget {
 }
 
 class _NotifItemState extends State<NotifItem> {
-  final img_path = 'assets/images/profiles/MH.jpg';
+  final img_path = 'assets/icons/notification.jpg';
   String message = "couldn't find notification";
+
+  void updateStatus(status newstatus) {
+    setState(() {
+      widget.Req.req_status = newstatus;
+    });
+  }
+
   String formulate_notif(request req, String uid) {
     if (req.req_status.toString() == 'status.wait_to_join' &&
         req.Stuid != uid) {
@@ -30,22 +42,27 @@ class _NotifItemState extends State<NotifItem> {
       message =
           'You applied to ${req.proj_name} as ${req.position_name}. The Project owner will recieve your request.';
     } else {
-      if (req.req_status == 'status:Accepted') {
+      if (req.req_status.toString() == 'status.Accepted') {
         message =
             'Congrats, you have been accepted to join ${req.proj_name} as ${req.position_name}';
+      } else {
+        print('wtf');
       }
     }
 
     return message;
   }
 
-  bool isPressed = false;
   @override
   Widget build(BuildContext context) {
+    //print(
+    //  'status for ${widget.Req.position_name} is ${widget.Req.req_status.toString()}');
     final user = Provider.of<Student?>(context);
 
     final message = formulate_notif(widget.Req, user!.uid);
-    if (widget.Req.req_status.toString() == 'status.wait_to_join' &&
+    print('message :${message}');
+    if ((widget.Req.req_status.toString() == 'status.wait_to_join' ||
+            widget.Req.req_status.toString() == 'status.Accepted') &&
         widget.Req.Stuid == user.uid) {
       return ListTile(
         onTap: () {},
@@ -75,6 +92,9 @@ class _NotifItemState extends State<NotifItem> {
           img_path: img_path,
           message: message,
           req: widget.Req,
+          onbuttonpressed: updateStatus,
+          UserId: user.uid,
+          newSt: widget.Req.req_status,
         ),
       );
     }
@@ -86,23 +106,45 @@ class AcceptCancelWidget extends StatefulWidget {
       {Key? key,
       required this.img_path,
       required this.message,
+      required this.UserId,
+      required this.newSt,
+      required this.onbuttonpressed,
       required this.req})
       : super(key: key);
 
   final String img_path;
   final String message;
   final request req;
+  final String UserId;
+  final status newSt;
+  final ValueChanged<status> onbuttonpressed;
 
   @override
   State<AcceptCancelWidget> createState() => _AcceptCancelWidgetState();
 }
 
 class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
-  bool show_buttons = true;
-  bool accepted = true;
+  late bool show_buttons;
+  late bool accepted;
+  bool showWidget = true;
+  void initState() {
+    super.initState();
+    accepted = widget.req.req_status == status.Accepted;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return show_buttons ? button_widget() : Buttonless_widget(accepted);
+    if (widget.req.req_status.toString() == 'status.wait_to_join') {
+      show_buttons = true;
+    } else {
+      show_buttons = false;
+    }
+
+    if (show_buttons) {
+      return button_widget();
+    } else {
+      return Buttonless_widget(accepted);
+    }
   }
 
   Widget button_widget() {
@@ -139,11 +181,29 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
                           fontWeight: FontWeight.normal),
                     ),
                     onPressed: () {
+                      widget.req.req_status = status.Accepted;
                       DatabseService().addStudentToProject_db(widget.req.Stuid,
                           widget.req.position_name, widget.req.proj_id);
+
+                      int index = findRequestIndex(
+                          updated_notifications, widget.req.rid);
+                      updated_notifications[index] = widget.req;
+                      //print('f${updated_notifications[index].req_status}');
+
+                      DatabseService().updateRequests(
+                          widget.req.Stuid, updated_notifications);
+
+                      // update the owner's requests
+                      DatabseService().updateOwnerReqs(
+                          widget.req.proj_owner_id, widget.req);
+
+                      showWidget = false;
+
                       setState(() {
                         show_buttons = false;
+                        accepted = true;
                         widget.req.req_status = status.Accepted;
+                        widget.onbuttonpressed(status.Accepted);
                       });
                     }),
               ),
@@ -160,10 +220,26 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
                   ),
                   onPressed: () {
                     // Add your cancel button action here
-                    //DatabseService().deleteRequest(widget.req.rid);
+                    widget.req.req_status = status.Rejected;
+
+                    int index =
+                        findRequestIndex(updated_notifications, widget.req.rid);
+                    updated_notifications[index] = widget.req;
+                    //print('f${updated_notifications[index].req_status}');
+
+                    DatabseService().updateRequests(
+                        widget.req.Stuid, updated_notifications);
+
+                    // update the owner's requests
+                    DatabseService()
+                        .updateOwnerReqs(widget.req.proj_owner_id, widget.req);
+
                     setState(() {
                       show_buttons = false;
                       accepted = false;
+                      widget.req.req_status = status.Rejected;
+                      widget.onbuttonpressed(status.Rejected);
+                      showWidget = false;
                     });
                   },
                 ),

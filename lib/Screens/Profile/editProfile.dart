@@ -20,6 +20,7 @@ class editProfile extends StatefulWidget {
 
 class _editProfileState extends State<editProfile> {
   String newName = '';
+  List<String> newSkills = [];
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +173,7 @@ class _editProfileState extends State<editProfile> {
         },
         onChanged: (value) {
           setState(() {
-            newName = value;
+            newSkills.add(value);
           });
         },
       ),

@@ -142,10 +142,23 @@ class _ProjectScreenState extends State<ProjectScreen> {
                 alignment: Alignment.centerLeft,
               ),
               Column(
-                children: [
-                  for (var i in widget.curr_project.positions_needed)
-                    PositionNeeded(i, 'Apply', st, u.pid, u.P_title)
-                ],
+                children: widget.curr_project.positions_needed.isNotEmpty
+                    ? [
+                        for (var i in widget.curr_project.positions_needed)
+                          PositionNeeded(
+                              i, 'Apply', st, u.pid, u.P_title, u.p_owner),
+                      ]
+                    : [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 5, right: 5, top: 10, bottom: 10),
+                          child: Center(
+                            child: normal_text(
+                              'This project has no vacant postions.',
+                            ),
+                          ),
+                        ),
+                      ],
               ),
               Align(
                 child: heading1_text('Members'),

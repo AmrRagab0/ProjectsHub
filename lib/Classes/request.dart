@@ -6,14 +6,18 @@ class request {
   String stu_name = '';
   String proj_id = '';
   String proj_name = '';
+  String proj_owner_id = '';
   DateTime created_on = DateTime.now();
   String position_name = '';
-  status req_status = status.wait_to_join;
+  late status req_status;
 
   request(
       {required this.Stuid,
       required this.stu_name,
+      required this.rid,
       required this.proj_id,
+      required this.proj_owner_id,
+      required this.req_status,
       required this.proj_name,
       required this.position_name});
 
@@ -21,6 +25,7 @@ class request {
     final save_out = {
       'rid': r.rid,
       'stuid': r.Stuid,
+      'proj_owner_id': r.proj_owner_id,
       'stu_name': r.stu_name,
       'created_on': r.created_on,
       'proj_id': r.proj_id,

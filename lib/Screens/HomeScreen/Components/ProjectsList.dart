@@ -30,6 +30,7 @@ class _ProjectListState extends State<ProjectList> {
     print('all projects:${All_projects}');
 
     return ListView.builder(
+      padding: EdgeInsets.only(bottom: 150),
       itemBuilder: (context, index) {
         return Project_card(theProject: All_projects[index]);
       },

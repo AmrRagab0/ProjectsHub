@@ -14,7 +14,7 @@ class Student {
   ];
   List<String> participated_in = [];
   int phone_num = 010;
-  List<dynamic> current_projects = []; // should contain the ids of projects
+  List<dynamic> current_projects; // should contain the ids of projects
 
   Student({
     required this.uid,

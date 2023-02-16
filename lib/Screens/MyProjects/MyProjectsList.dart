@@ -33,7 +33,7 @@ class _MyProjectsListState extends State<MyProjectsList> {
           Student me = snapshot.data!;
           for (var p in All_projects) {
             //print('comparing ${me.current_projects} and ${p.pid}');
-            if (me.current_projects.contains(p.pid)) {
+            if (user.uid == p.p_owner) {
               if (MyProjects.contains(p) != true) {
                 MyProjects.add(p);
                 //print('added');

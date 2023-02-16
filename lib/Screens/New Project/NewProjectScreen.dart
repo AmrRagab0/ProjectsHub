@@ -288,7 +288,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                           };
                           final result =
                               DatabseService().storeNewProject(p, sr);
-                          print('member role: ${p.member_role}');
 
                           user.current_projects.add(await result);
 
@@ -299,7 +298,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                               user.Email_address,
                               user.Profile_image,
                               user.current_projects);
-                          print('current project: ${user.current_projects}');
+
                           ShowMessage();
                           Navigator.pop(context);
                         }
