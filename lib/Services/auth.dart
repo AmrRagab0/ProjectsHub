@@ -44,44 +44,43 @@ class AuthService {
   }
 
   // ChatGPT sign in modification
-
-  Future<UserCredential> signInWithGoogle() async {
-    // Create a new GoogleSignIn instance
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+  Future<Student?> signInWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
 
     // Sign out any existing users
     await googleSignIn.signOut();
 
-    // Start the Google sign-in process
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
-    if (googleUser != null) {
-      // Get the GoogleSignInAuthentication object
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+    // Check if the user's email is from the allowed domain
+    if (googleUser?.email?.endsWith('@zewailcity.edu.eg') == true) {
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-      // Check if the user's email is from the allowed domain
-      if (googleUser.email.endsWith('@zewailcity.edu.eg')) {
-        // Create a new credential using the GoogleAuthProvider
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      // Once signed in, return the UserCredential
+      final result =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
-        // Sign in to Firebase using the credential
-        return FirebaseAuth.instance.signInWithCredential(credential);
-      } else {
-        // Show an error message to the user
-        throw FirebaseAuthException(
-            code: 'email-not-allowed',
-            message:
-                'Only emails from zewailcity.edu.eg are allowed to sign in.');
-      }
+      // Update student data in the database
+      await DatabseService(St_uid: result.user!.uid).updateStudentData(
+        result.user!.uid,
+        result.user!.displayName!,
+        result.user!.displayName!,
+        result.user!.email!,
+        result.user!.photoURL!,
+        <String>[],
+      );
+
+      return _studentFromFirbaseUser(result.user!);
     } else {
-      // User cancelled the sign-in process
       throw FirebaseAuthException(
-          code: 'user-cancelled',
-          message: 'Sign-in process was cancelled by the user.');
+        code: 'email-not-allowed',
+        message: 'Only emails from zewailcity.edu.eg are allowed to sign in.',
+      );
     }
   }
 
@@ -108,7 +107,8 @@ class AuthService {
         result.user!.photoURL!, <String>[]);
     return _studentFromFirbaseUser(result.user!);
   }
-*/
+  */
+
   // sign up
   Future Register(String email, String password) async {
     try {

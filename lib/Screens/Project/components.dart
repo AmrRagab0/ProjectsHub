@@ -100,8 +100,14 @@ Widget profilePicture(imagePath) {
   );
 }
 
-Widget PositionNeeded(String positionName, String text, Student st,
-    String proj_id, String proj_name, String proj_owner_id) {
+Widget PositionNeeded(
+    String positionName,
+    String text,
+    Student st,
+    String proj_id,
+    String proj_name,
+    String proj_owner_id,
+    BuildContext context) {
   return Padding(
     padding: const EdgeInsets.all(6.0),
     child: Row(
@@ -125,14 +131,21 @@ Widget PositionNeeded(String positionName, String text, Student st,
           child: SizedBox(),
         ),
         roundedButton(
-            text, positionName, st, proj_id, proj_name, proj_owner_id),
+            text, positionName, st, proj_id, proj_name, proj_owner_id, context),
       ],
     ),
   );
 }
 
-Widget roundedButton(String text, String positionName, Student st,
-    String proj_id, String proj_name, String proj_owner_id) {
+Widget roundedButton(
+  String text,
+  String positionName,
+  Student st,
+  String proj_id,
+  String proj_name,
+  String proj_owner_id,
+  BuildContext context,
+) {
   var uuid = Uuid();
   return SizedBox(
     height: 35,
@@ -140,34 +153,59 @@ Widget roundedButton(String text, String positionName, Student st,
     child: ElevatedButton(
       onPressed: () async {
         final request r = request(
-            Stuid: st.uid,
-            rid: uuid.v4(),
-            stu_name: st.First_name,
-            proj_id: proj_id,
-            proj_owner_id: proj_owner_id,
-            proj_name: proj_name,
-            req_status: status.wait_to_join,
-            position_name: positionName);
+          Stuid: st.uid,
+          rid: uuid.v4(),
+          stu_name: st.First_name,
+          proj_id: proj_id,
+          proj_owner_id: proj_owner_id,
+          proj_name: proj_name,
+          req_status: status.wait_to_join,
+          position_name: positionName,
+        );
+
         final result = DatabseService(St_uid: st.uid).storeNewRequest(r);
 
         // notify the owner of the project
         final res = DatabseService(St_uid: st.uid).Notify_proj_owner(r);
+
+        // show pop-up message
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: heading2_text('Request sent'),
+              content: Text('Your request has been sent successfully.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       },
       style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
-              Color.fromARGB(255, 10, 51, 121)),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  side: BorderSide(color: Color.fromARGB(255, 10, 51, 121))))),
+        backgroundColor:
+            MaterialStateProperty.all<Color>(Color.fromARGB(255, 10, 51, 121)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+            side: BorderSide(color: Color.fromARGB(255, 10, 51, 121)),
+          ),
+        ),
+      ),
       child: Center(
         child: Text(
           text,
           style: TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontFamily: 'san fran',
-              fontWeight: FontWeight.normal),
+            color: Colors.white,
+            fontSize: 15,
+            fontFamily: 'san fran',
+            fontWeight: FontWeight.normal,
+          ),
         ),
       ),
     ),
@@ -298,3 +336,44 @@ Widget editBlock(String text) {
     ],
   );
 }
+
+
+
+
+/* 
+// original create project button
+ ElevatedButton(
+      onPressed: () async {
+        final request r = request(
+            Stuid: st.uid,
+            rid: uuid.v4(),
+            stu_name: st.First_name,
+            proj_id: proj_id,
+            proj_owner_id: proj_owner_id,
+            proj_name: proj_name,
+            req_status: status.wait_to_join,
+            position_name: positionName);
+        final result = DatabseService(St_uid: st.uid).storeNewRequest(r);
+
+        // notify the owner of the project
+        final res = DatabseService(St_uid: st.uid).Notify_proj_owner(r);
+      },
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+              Color.fromARGB(255, 10, 51, 121)),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  side: BorderSide(color: Color.fromARGB(255, 10, 51, 121))))),
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontFamily: 'san fran',
+              fontWeight: FontWeight.normal),
+        ),
+      ),
+    ),
+    */

@@ -127,12 +127,37 @@ class DatabseService {
       }
       return owners_reqs_list;
     });
-    //print('sdfasd: ${owner_reqs}');
+
     int index2 = findRequestIndex(owner_reqs, newReq.rid);
-    owner_reqs[index2] = newReq;
+    owner_reqs[index2] = newReq.SaveReqDB(newReq);
 
     DatabseService().updateRequests(newReq.proj_owner_id, owner_reqs);
     return 'done';
+  }
+
+  Future<void> addOrUpdateReq(String id, request newReq) async {
+    print('updated is :${newReq.req_status}');
+    List owner_reqs = await getNotifsById(id);
+
+    int index = findRequestIndex(owner_reqs, newReq.rid);
+    if (index != -1) {
+      owner_reqs[index] = newReq;
+    } else {
+      owner_reqs.add(newReq);
+    }
+    print("type is :${owner_reqs[1].runtimeType}");
+    List updatedReqs = owner_reqs.map((req) => req.SaveReqDB(req)).toList();
+
+    await DatabseService().updateRequests(id, owner_reqs);
+  }
+
+  Future<List<dynamic>> getRequestsByUser(String userId) async {
+    DocumentSnapshot doc = await requestsCollection.doc(userId).get();
+    if (doc.exists) {
+      return doc['notifications'];
+    } else {
+      return [];
+    }
   }
 
   Future getNotifsById(String id) async {
@@ -223,6 +248,13 @@ class DatabseService {
     //current_projects: snapshot.get('current projects'));
   }
 
+  Future<Student> getStudentbyId(String St_id) async {
+    return await studentsCollection
+        .doc(St_id)
+        .get()
+        .then((value) => _getStudentFromDB(value));
+  }
+
   // returns the student document from firestore
   Stream<Student> get studentStream {
     return studentsCollection.doc(St_uid).snapshots().map(_getStudentFromDB);
@@ -268,6 +300,46 @@ class DatabseService {
     requestsCollection.doc(id).delete();
   }
 
+//chatgpt : addStudentToProject
+  Future<void> addStudentToProject_db(
+      String stuid, String position, String proj_id) async {
+    // get student full data
+    DocumentSnapshot st_snap = await studentsCollection.doc(stuid).get();
+    Student st = _getStudentFromDB(st_snap);
+
+    // get project data
+    var proj_snap = await projectsCollection.doc(proj_id).get();
+    Project pr = getProjectFromDB(proj_snap);
+
+    // check if the position is available
+    if (!pr.positions_needed.contains(position)) {
+      throw 'Position $position is not available in this project';
+    }
+
+    Map sr = {
+      "First_name": st.First_name,
+      "Profile_image": st.Profile_image,
+      "Role": position,
+      "uid": st.uid
+    };
+
+    // add student to project
+    pr.addStudent(sr);
+
+    // remove position
+    pr.positions_needed.remove(position);
+
+    // update project doc in the database
+    await projectsCollection
+        .doc(proj_id)
+        .update(pr.saveProjectDb(pr) as Map<String, dynamic>);
+  }
+}
+
+
+
+
+/*
   Future<void> addStudentToProject_db(
       String stuid, String position, String proj_id) async {
     // get student full data
@@ -294,4 +366,5 @@ class DatabseService {
         .doc(proj_id)
         .update(pr.saveProjectDb(pr) as Map<String, dynamic>);
   }
-}
+
+*/

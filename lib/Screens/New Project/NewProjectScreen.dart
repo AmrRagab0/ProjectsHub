@@ -246,70 +246,65 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                     SizedBox(
                       width: 20,
                     ),
-                    removePositionButton(),
+                    //removePositionButton(),
                   ],
                 ),
                 SizedBox(
                   height: 10,
                 ),
-                SizedBox(
-                  height: 50,
-                  width: 10,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(dark_black),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: BorderSide(color: dark_black)))),
-                    child: GestureDetector(
-                      onTap: () async {
-                        print(
-                            'validation : ${formKey.currentState!.validate()}');
-                        if (formKey.currentState!.validate() == true) {
-                          positions_needed = positions_needed.toSet().toList();
-                          Project p = Project(
-                              pid: '',
-                              P_title: Project_name,
-                              P_description: Project_description,
-                              positions_needed: positions_needed,
-                              p_owner: me.uid,
-                              member_role: [],
-                              P_image: all_images[randomNumber]);
+                GestureDetector(
+                  onTap: () async {
+                    print('validation : ${formKey.currentState!.validate()}');
+                    if (formKey.currentState!.validate() == true) {
+                      positions_needed = positions_needed.toSet().toList();
+                      Project p = Project(
+                          pid: '',
+                          P_title: Project_name,
+                          P_description: Project_description,
+                          positions_needed: positions_needed,
+                          p_owner: me.uid,
+                          member_role: [],
+                          P_image: all_images[randomNumber]);
 
-                          Map sr = {
-                            "uid": me.uid,
-                            "First_name": me.First_name,
-                            "Profile_image": me.Profile_image,
-                            'Role': "Project Owner"
-                          };
-                          final result =
-                              DatabseService().storeNewProject(p, sr);
+                      Map sr = {
+                        "uid": me.uid,
+                        "First_name": me.First_name,
+                        "Profile_image": me.Profile_image,
+                        'Role': "Project Owner"
+                      };
+                      final result = DatabseService().storeNewProject(p, sr);
 
-                          user.current_projects.add(await result);
+                      user.current_projects.add(await result);
 
-                          DatabseService(St_uid: user.uid).updateStudentData(
-                              user.uid,
-                              user.First_name,
-                              "",
-                              user.Email_address,
-                              user.Profile_image,
-                              user.current_projects);
+                      DatabseService(St_uid: user.uid).updateStudentData(
+                          user.uid,
+                          user.First_name,
+                          "",
+                          user.Email_address,
+                          user.Profile_image,
+                          user.current_projects);
 
-                          ShowMessage();
-                          Navigator.pop(context);
-                        }
-                      },
+                      ShowMessage();
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: dark_black,
+                      borderRadius: BorderRadius.circular(18.0),
+                      border: Border.all(color: dark_black),
+                    ),
+                    child: Center(
                       child: Text(
                         'Create Project',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontFamily: 'san fran',
-                            fontWeight: FontWeight.normal),
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: 'san fran',
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
                   ),

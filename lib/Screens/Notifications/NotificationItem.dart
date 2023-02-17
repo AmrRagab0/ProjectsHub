@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
+import 'package:projectshub1/Screens/Profile/ProfileScreen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -33,6 +34,8 @@ class _NotifItemState extends State<NotifItem> {
   }
 
   String formulate_notif(request req, String uid) {
+    print(
+        '${req.position_name} have stuid:${req.Stuid}  and owner:${req.proj_owner_id}');
     if (req.req_status.toString() == 'status.wait_to_join' &&
         req.Stuid != uid) {
       message =
@@ -45,8 +48,14 @@ class _NotifItemState extends State<NotifItem> {
       if (req.req_status.toString() == 'status.Accepted') {
         message =
             'Congrats, you have been accepted to join ${req.proj_name} as ${req.position_name}';
+      } else if (req.req_status.toString() == 'status.Rejected' &&
+          req.Stuid == uid) {
+        message =
+            "We are sorry, Project : ${req.proj_name} is not suitable for you";
       } else {
         print('wtf');
+        message =
+            'You REJECTED ${req.stu_name} as ${req.position_name} in your Project:${req.proj_name}';
       }
     }
 
@@ -124,12 +133,15 @@ class AcceptCancelWidget extends StatefulWidget {
 }
 
 class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
+  String elmessage = '';
+
   late bool show_buttons;
   late bool accepted;
   bool showWidget = true;
   void initState() {
     super.initState();
     accepted = widget.req.req_status == status.Accepted;
+    elmessage = widget.message;
   }
 
   @override
@@ -143,7 +155,8 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
     if (show_buttons) {
       return button_widget();
     } else {
-      return Buttonless_widget(accepted);
+      return Buttonless_widget(
+          accepted, widget.req.Stuid, widget.req.proj_owner_id, elmessage);
     }
   }
 
@@ -180,30 +193,49 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
                           fontFamily: 'san fran',
                           fontWeight: FontWeight.normal),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       widget.req.req_status = status.Accepted;
-                      DatabseService().addStudentToProject_db(widget.req.Stuid,
-                          widget.req.position_name, widget.req.proj_id);
+                      //DatabseService().addStudentToProject_db(widget.req.Stuid,
+                      //  widget.req.position_name, widget.req.proj_id);
+                      try {
+                        await DatabseService().addStudentToProject_db(
+                            widget.req.Stuid,
+                            widget.req.position_name,
+                            widget.req.proj_id);
+                        widget.req.req_status = status.Accepted;
+                      } catch (e) {
+                        widget.req.req_status = status.Rejected;
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Error'),
+                              content: Text(e.toString()),
+                              actions: [
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
 
-                      int index = findRequestIndex(
-                          updated_notifications, widget.req.rid);
-                      updated_notifications[index] = widget.req;
-                      //print('f${updated_notifications[index].req_status}');
-
-                      DatabseService().updateRequests(
-                          widget.req.Stuid, updated_notifications);
-
-                      // update the owner's requests
-                      DatabseService().updateOwnerReqs(
-                          widget.req.proj_owner_id, widget.req);
+                      DatabseService()
+                          .addOrUpdateReq(widget.req.Stuid, widget.req);
+                      DatabseService()
+                          .addOrUpdateReq(widget.req.proj_owner_id, widget.req);
 
                       showWidget = false;
 
                       setState(() {
                         show_buttons = false;
                         accepted = true;
-                        widget.req.req_status = status.Accepted;
-                        widget.onbuttonpressed(status.Accepted);
+                        //widget.req.req_status = status.Accepted;
+                        widget.onbuttonpressed(widget.req.req_status);
                       });
                     }),
               ),
@@ -221,18 +253,10 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
                   onPressed: () {
                     // Add your cancel button action here
                     widget.req.req_status = status.Rejected;
-
-                    int index =
-                        findRequestIndex(updated_notifications, widget.req.rid);
-                    updated_notifications[index] = widget.req;
-                    //print('f${updated_notifications[index].req_status}');
-
-                    DatabseService().updateRequests(
-                        widget.req.Stuid, updated_notifications);
-
-                    // update the owner's requests
                     DatabseService()
-                        .updateOwnerReqs(widget.req.proj_owner_id, widget.req);
+                        .addOrUpdateReq(widget.req.Stuid, widget.req);
+                    DatabseService()
+                        .addOrUpdateReq(widget.req.proj_owner_id, widget.req);
 
                     setState(() {
                       show_buttons = false;
@@ -251,12 +275,13 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
     );
   }
 
-  Widget Buttonless_widget(bool accepted) {
-    String message = '';
+  Widget Buttonless_widget(
+      bool accepted, String userid, String ownerId, String message) {
+    ;
     if (accepted) {
       message =
           'You ACCEPTED ${widget.req.stu_name} as ${widget.req.position_name} in your Project:${widget.req.proj_name}';
-    } else {
+    } else if (accepted == false && userid == ownerId) {
       message =
           'You REJECTED ${widget.req.stu_name} as ${widget.req.position_name} in your Project:${widget.req.proj_name}';
     }

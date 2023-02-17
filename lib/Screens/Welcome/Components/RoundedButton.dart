@@ -35,6 +35,51 @@ class RoundButton extends StatelessWidget {
   }
 }
 
+class PressableSmallButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final Color color;
+  final Color textcolor;
+
+  const PressableSmallButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+    required this.color,
+    required this.textcolor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      width: size.width * 0.5,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
+        child: GestureDetector(
+          onTap: onPressed,
+          child: Container(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: textcolor,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SmallButton extends StatelessWidget {
   final String text;
   final void Function()? press;

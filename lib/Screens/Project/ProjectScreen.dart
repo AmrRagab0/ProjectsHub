@@ -60,7 +60,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
                 maxHeight: screenHeight * 0.8,
                 body: buildTop(widget.curr_project),
                 panelBuilder: (controller) =>
-                    buildHeader(controller, widget.curr_project, me),
+                    buildHeader(controller, widget.curr_project, me, context),
                 parallaxEnabled: true,
                 parallaxOffset: 0.5,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -94,7 +94,8 @@ class _ProjectScreenState extends State<ProjectScreen> {
     ]);
   }
 
-  Widget buildHeader(ScrollController cont, Project u, Student st) {
+  Widget buildHeader(
+      ScrollController cont, Project u, Student st, BuildContext context) {
     return ListView(
       controller: cont,
       children: [
@@ -145,8 +146,8 @@ class _ProjectScreenState extends State<ProjectScreen> {
                 children: widget.curr_project.positions_needed.isNotEmpty
                     ? [
                         for (var i in widget.curr_project.positions_needed)
-                          PositionNeeded(
-                              i, 'Apply', st, u.pid, u.P_title, u.p_owner),
+                          PositionNeeded(i, 'Apply', st, u.pid, u.P_title,
+                              u.p_owner, context),
                       ]
                     : [
                         Padding(

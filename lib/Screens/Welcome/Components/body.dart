@@ -132,19 +132,31 @@ class _BodyState extends State<Body> {
                   SizedBox(
                     height: 40,
                   ),
-                  SmallButton(
-                      text: 'Use as a guest',
-                      press: () async {
-                        dynamic result = await _auth.signInAnon();
-                        if (result == null) {
-                          print('Error signing in');
-                        } else {
-                          print("signed in");
-                          print(result);
-                        }
-                      },
-                      color: Colors.black45,
-                      textcolor: Colors.black)
+                  PressableSmallButton(
+                    text: 'Use as a guest',
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("البيت بيتك"),
+                            content: Text(
+                                'عيب يسطا والله انت مش ضيف...ادخل بايميلك يا صاحبي'),
+                            actions: [
+                              TextButton(
+                                child: Text("OK"),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    color: Colors.black45,
+                    textcolor: Colors.black,
+                  )
                 ],
               ),
             ),
