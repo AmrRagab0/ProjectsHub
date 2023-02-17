@@ -6,12 +6,7 @@ class Student {
   late String Last_name = '';
   late String Email_address = '';
   String Profile_image = '';
-  List<String> skills = [
-    'Python Developer',
-    'App Developer',
-    'Designer',
-    '5-year slave'
-  ];
+  List<String> skills = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4'];
   List<String> participated_in = [];
   int phone_num = 010;
   List<dynamic> current_projects; // should contain the ids of projects

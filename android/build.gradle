@@ -32,3 +32,6 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+
+// added to fix build release

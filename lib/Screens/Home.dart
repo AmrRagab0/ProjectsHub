@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
     //ProjectScreen(Project ),
     MyProjects(),
     NotificationsScreen(),
-    editProfile(),
+    ProfileScreen(),
   ];
 
   @override

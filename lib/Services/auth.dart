@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'database.dart';
 import '../Classes/Student.dart';
+import 'package:flutter/material.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   // creating a custom student from a firebase user
   Student? _studentFromFirbaseUser(User user) {
@@ -41,9 +43,50 @@ class AuthService {
     }
   }
 
-  // sign in with email and password
+  // ChatGPT sign in modification
 
-  // sign in with Google
+  Future<UserCredential> signInWithGoogle() async {
+    // Create a new GoogleSignIn instance
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    // Sign out any existing users
+    await googleSignIn.signOut();
+
+    // Start the Google sign-in process
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+    if (googleUser != null) {
+      // Get the GoogleSignInAuthentication object
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Check if the user's email is from the allowed domain
+      if (googleUser.email.endsWith('@zewailcity.edu.eg')) {
+        // Create a new credential using the GoogleAuthProvider
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in to Firebase using the credential
+        return FirebaseAuth.instance.signInWithCredential(credential);
+      } else {
+        // Show an error message to the user
+        throw FirebaseAuthException(
+            code: 'email-not-allowed',
+            message:
+                'Only emails from zewailcity.edu.eg are allowed to sign in.');
+      }
+    } else {
+      // User cancelled the sign-in process
+      throw FirebaseAuthException(
+          code: 'user-cancelled',
+          message: 'Sign-in process was cancelled by the user.');
+    }
+  }
+
+/*
+  // old sign in with Google
   Future signInWithGoogle() async {
     final GoogleSignInAccount? googleUser =
         await GoogleSignIn(scopes: ['email']).signIn();
@@ -65,7 +108,7 @@ class AuthService {
         result.user!.photoURL!, <String>[]);
     return _studentFromFirbaseUser(result.user!);
   }
-
+*/
   // sign up
   Future Register(String email, String password) async {
     try {

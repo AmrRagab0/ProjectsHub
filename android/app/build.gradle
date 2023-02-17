@@ -30,6 +30,10 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion flutter.compileSdkVersion
+    //newly added
+    lintOptions { 
+        checkReleaseBuilds false
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

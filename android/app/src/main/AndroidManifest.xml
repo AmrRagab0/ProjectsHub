@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.projectshub1">
    <application
-        android:label="projectshub1"
+        android:label="Projects Hub"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         android:usesCleartextTraffic="true"

@@ -102,28 +102,32 @@ Widget profilePicture(imagePath) {
 
 Widget PositionNeeded(String positionName, String text, Student st,
     String proj_id, String proj_name, String proj_owner_id) {
-  return Row(
-    children: [
-      Icon(
-        Icons.panorama_fish_eye,
-        size: 20,
-      ),
-      SizedBox(
-        width: 10,
-      ),
-      Text(
-        positionName,
-        style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            color: Colors.black,
-            fontWeight: FontWeight.bold),
-      ),
-      Expanded(
-        child: SizedBox(),
-      ),
-      roundedButton(text, positionName, st, proj_id, proj_name, proj_owner_id),
-    ],
+  return Padding(
+    padding: const EdgeInsets.all(6.0),
+    child: Row(
+      children: [
+        Icon(
+          Icons.panorama_fish_eye,
+          size: 20,
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          positionName,
+          style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 18,
+              color: Colors.black,
+              fontWeight: FontWeight.bold),
+        ),
+        Expanded(
+          child: SizedBox(),
+        ),
+        roundedButton(
+            text, positionName, st, proj_id, proj_name, proj_owner_id),
+      ],
+    ),
   );
 }
 

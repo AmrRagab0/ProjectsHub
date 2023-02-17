@@ -21,6 +21,7 @@ class editProfile extends StatefulWidget {
 class _editProfileState extends State<editProfile> {
   String newName = '';
   List<String> newSkills = [];
+  static const Color dark_black = Color(0xFF000000);
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,7 @@ class _editProfileState extends State<editProfile> {
     List<String> participated_in = [];
     final user = Provider.of<Student?>(context);
     skillsList = user!.skills;
+
     print('skills list: ${skillsList}');
     for (var i = 0; i < skillsList.length; i++) {
       skillsWidgetList.add(
@@ -49,57 +51,59 @@ class _editProfileState extends State<editProfile> {
               Student me = snapshot.data!;
             }
             return Container(
-              child: ListView(
-                padding: EdgeInsets.all(10),
-                children: [
-                  Center(
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 4,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                offset: Offset(0, 10),
-                              ),
-                            ],
-                            image: DecorationImage(
-                                image: NetworkImage(user.Profile_image),
-                                fit: BoxFit.cover),
+              child: Column(children: [
+                ListView(
+                  padding: EdgeInsets.all(10),
+                  children: [
+                    Center(
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 130,
+                            height: 130,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 4,
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 10),
+                                ),
+                              ],
+                              image: DecorationImage(
+                                  image: NetworkImage(user.Profile_image),
+                                  fit: BoxFit.cover),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Form(
-                    child: Column(
-                      children: [
-                        editNamefield(user.First_name),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: heading1_text(text: "SKILLS"),
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (_, index) => skillsWidgetList[index],
-                          itemCount: skillsWidgetList.length,
-                        ),
-                      ],
+                    SizedBox(
+                      height: 30,
                     ),
-                  ),
-                ],
-              ),
+                    Form(
+                      child: Column(
+                        children: [
+                          editNamefield(user.First_name),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: heading1_text(text: "SKILLS"),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemBuilder: (_, index) => skillsWidgetList[index],
+                            itemCount: skillsWidgetList.length,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ]),
             );
           }),
     );
@@ -180,3 +184,44 @@ class _editProfileState extends State<editProfile> {
     );
   }
 }
+
+/*
+Widget BigButton() {
+  const Color dark_black = Color(0xFF000000);
+  return GestureDetector(
+      onTap: () {
+        print('validation : ${formKey.currentState!.validate()}');
+        if (formKey.currentState!.validate() == true) {
+          DatabseService(St_uid: user.uid).updateStudentData(
+              user.uid,
+              user.First_name,
+              "",
+              user.Email_address,
+              user.Profile_image,
+              user.current_projects);
+
+          Navigator.pop(context);
+        }
+      },
+      child: SizedBox(
+          height: 50,
+          width: 10,
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(dark_black),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                        side: BorderSide(color: dark_black)))),
+            child: Text(
+              'Create Project',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontFamily: 'san fran',
+                  fontWeight: FontWeight.normal),
+            ),
+          )));
+}
+*/
