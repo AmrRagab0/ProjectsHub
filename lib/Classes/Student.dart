@@ -6,7 +6,7 @@ class Student {
   late String Last_name = '';
   late String Email_address = '';
   String Profile_image = '';
-  List<String> skills = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4'];
+  List<dynamic> skills;
   List<String> participated_in = [];
   int phone_num = 010;
   List<dynamic> current_projects; // should contain the ids of projects
@@ -18,6 +18,7 @@ class Student {
     required this.Email_address,
     required this.Profile_image,
     required this.current_projects,
+    required this.skills,
   });
   //required this.current_projects});
 
@@ -36,6 +37,7 @@ class Student {
       'phone number': s.phone_num,
       'participated in': s.participated_in,
       'current projects': s.current_projects,
+      'skills': s.skills
     };
     return save_out;
   }

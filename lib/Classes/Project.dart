@@ -12,7 +12,7 @@ class Project {
   //List<student_role> member_role = [];
   List<dynamic> member_role = [];
   String P_image = "Default.jpg";
-  DateTime created_on = DateTime.now();
+  DateTime created_on;
   String p_owner;
 
   Project({
@@ -22,6 +22,7 @@ class Project {
     required this.positions_needed,
     required this.p_owner,
     required this.member_role,
+    required this.created_on,
     required this.P_image,
   });
 

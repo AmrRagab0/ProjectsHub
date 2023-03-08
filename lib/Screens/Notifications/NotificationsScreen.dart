@@ -18,8 +18,11 @@ class NotificationsScreen extends StatelessWidget {
         stream: DatabseService(St_uid: user!.uid).getData(user.uid),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List all_notifs = snapshot.data ?? [];
-            updated_notifications = all_notifs;
+            List all_notifs_rand = snapshot.data ?? [];
+            all_notifs_rand
+                .sort((a, b) => a.created_on.compareTo(b.created_on));
+            List<dynamic> all_notifs;
+            all_notifs = all_notifs_rand.reversed.toList();
             //all_notifs.sort((a, b) => a.created_on.compareTo(b.created_on));
 
             return Scaffold(

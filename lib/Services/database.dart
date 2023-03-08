@@ -42,6 +42,7 @@ class DatabseService {
         Last_name: last_name,
         Email_address: email,
         Profile_image: image_url,
+        skills: ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4'],
         current_projects: Current_Projects);
 
     ///print('should creeate notification page');
@@ -49,8 +50,6 @@ class DatabseService {
     DocumentSnapshot documentSnapshot =
         await requestsCollection.doc(S_uid).get();
     if (documentSnapshot.exists) {
-      // do nothing
-
     } else {
       request r = request(
           Stuid: '',
@@ -58,6 +57,7 @@ class DatabseService {
           proj_id: '',
           proj_owner_id: '',
           rid: '',
+          created_on: DateTime.now(),
           proj_name: '',
           req_status: status.wait_to_join,
           position_name: '');
@@ -71,6 +71,12 @@ class DatabseService {
     //print(s.saveUserDb(s));
 
     return await studentsCollection.doc(S_uid).set(s.saveUserDb(s));
+  }
+
+  Future updateProfile(String stuid, String name, List skills) async {
+    await studentsCollection
+        .doc(stuid)
+        .update({'skills': skills, 'name': name});
   }
 
   Future<String> storeNewProject(Project P, Map sr) async {
@@ -136,7 +142,7 @@ class DatabseService {
   }
 
   Future<void> addOrUpdateReq(String id, request newReq) async {
-    print('updated is :${newReq.req_status}');
+    //print('updated is :${newReq.req_status}');
     List owner_reqs = await getNotifsById(id);
 
     int index = findRequestIndex(owner_reqs, newReq.rid);
@@ -145,7 +151,7 @@ class DatabseService {
     } else {
       owner_reqs.add(newReq);
     }
-    print("type is :${owner_reqs[1].runtimeType}");
+    //print("type is :${owner_reqs[1].runtimeType}");
     List updatedReqs = owner_reqs.map((req) => req.SaveReqDB(req)).toList();
 
     await DatabseService().updateRequests(id, owner_reqs);
@@ -182,6 +188,7 @@ class DatabseService {
             Stuid: i['stuid'],
             stu_name: i['stu_name'],
             rid: i['rid'],
+            created_on: i['created_on'].toDate(),
             proj_owner_id: i['proj_owner_id'],
             proj_id: i['proj_id'],
             proj_name: i['proj_name'],
@@ -237,14 +244,29 @@ class DatabseService {
   }
 */
   Student _getStudentFromDB(DocumentSnapshot snapshot) {
+    print('snap: ${snapshot.get('name')}');
     return Student(
-      uid: snapshot.get('uid'),
-      First_name: snapshot.get('name'),
-      Email_address: snapshot.get('email'),
-      Last_name: '',
-      Profile_image: snapshot.get('image url'),
-      current_projects: snapshot.get('current projects'),
-    );
+        uid: snapshot.get('uid'),
+        First_name: snapshot.get('name'),
+        Email_address: snapshot.get('email'),
+        Last_name: '',
+        Profile_image: snapshot.get('image url'),
+        current_projects: snapshot.get('current projects'),
+        skills: snapshot.get('skills'));
+    //current_projects: snapshot.get('current projects'));
+  }
+
+  /// WATCH OUT . THIS IS A TEMPORARY FUNC. iT'S THE SAME AS THE PREVIOUSE FUNC
+  Student getStudentFromDB(DocumentSnapshot snapshot) {
+    //print('snap: ${snapshot.get('name')}');
+    return Student(
+        uid: snapshot.get('uid'),
+        First_name: snapshot.get('name'),
+        Email_address: snapshot.get('email'),
+        Last_name: '',
+        Profile_image: snapshot.get('image url'),
+        current_projects: snapshot.get('current projects'),
+        skills: snapshot.get('skills'));
     //current_projects: snapshot.get('current projects'));
   }
 
@@ -260,6 +282,12 @@ class DatabseService {
     return studentsCollection.doc(St_uid).snapshots().map(_getStudentFromDB);
   }
 
+  Future<Student> getStudent() async {
+    DocumentSnapshot snapshot = await studentsCollection.doc(St_uid).get();
+    //var data = snapshot.data();
+    return _getStudentFromDB(snapshot);
+  }
+
   Stream<List<Project>> get projectStream {
     return projectsCollection.snapshots().map(_projectsListFromSnapshot);
   }
@@ -270,6 +298,7 @@ class DatabseService {
       return Project(
         pid: doc.get('pid'),
         P_title: doc.get('name') ?? '',
+        created_on: doc.get('created on').toDate() ?? '',
         P_description: doc.get('description') ?? '',
         positions_needed: doc.get('positions_needed') ?? '',
         p_owner: doc.get('Project Owner') ?? '',
@@ -284,6 +313,7 @@ class DatabseService {
     return Project(
       pid: snap.get('pid'),
       P_title: snap.get('name') ?? '',
+      created_on: snap.get('created on').toDate() ?? '',
       P_description: snap.get('description') ?? '',
       positions_needed: snap.get('positions_needed') ?? '',
       p_owner: snap.get('Project Owner') ?? '',

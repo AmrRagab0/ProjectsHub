@@ -263,6 +263,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                           P_description: Project_description,
                           positions_needed: positions_needed,
                           p_owner: me.uid,
+                          created_on: DateTime.now(),
                           member_role: [],
                           P_image: all_images[randomNumber]);
 

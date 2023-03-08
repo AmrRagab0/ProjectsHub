@@ -7,7 +7,7 @@ class request {
   String proj_id = '';
   String proj_name = '';
   String proj_owner_id = '';
-  DateTime created_on = DateTime.now();
+  DateTime created_on;
   String position_name = '';
   late status req_status;
 
@@ -18,6 +18,7 @@ class request {
       required this.proj_id,
       required this.proj_owner_id,
       required this.req_status,
+      required this.created_on,
       required this.proj_name,
       required this.position_name});
 

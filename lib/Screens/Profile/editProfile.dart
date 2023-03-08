@@ -19,25 +19,96 @@ class editProfile extends StatefulWidget {
 }
 
 class _editProfileState extends State<editProfile> {
+  String newBio = '';
   String newName = '';
+  List<Widget> skillsWidgetList = [];
+  List<dynamic> skillsList = [];
   List<String> newSkills = [];
   static const Color dark_black = Color(0xFF000000);
+  final formKey = GlobalKey<FormState>();
+
+  Widget addNewSkillButton() {
+    return TextButton(
+      child: Text("Add Skill",
+          style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'san fran',
+              fontWeight: FontWeight.bold)),
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(8)),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            side: BorderSide(color: Colors.black, width: 2),
+          ),
+        ),
+      ),
+      onPressed: _addNewSkill,
+    );
+  }
+
+  void _addNewSkill() {
+    skillsWidgetList.add(SkillField('new skill'));
+    skillsList.add('new skill');
+    setState(() {});
+  }
+
+  Widget editNamefield(String init_name) {
+    return TextFormField(
+      initialValue: init_name,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontFamily: 'san fran',
+      ),
+      decoration: InputDecoration(
+        labelStyle: TextStyle(
+            fontFamily: 'san fran',
+            fontWeight: FontWeight.bold,
+            color: Colors.black),
+        labelText: 'Your Name',
+        fillColor: Colors.black,
+        border: OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+      ),
+      validator: (value) {
+        if (value!.length < 3) {
+          return 'Name is too short';
+        } else {
+          return null;
+        }
+      },
+      onSaved: (value) {
+        if (this.mounted) {
+          setState(() {
+            newName = value!;
+          });
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> skillsList = [];
-    List<Widget> skillsWidgetList = [];
     List<String> participated_in = [];
     final user = Provider.of<Student?>(context);
-    skillsList = user!.skills;
 
-    print('skills list: ${skillsList}');
+    final hamada = DatabseService(St_uid: user!.uid).studentStream;
+
+    /*
     for (var i = 0; i < skillsList.length; i++) {
       skillsWidgetList.add(
         SkillField(skillsList[i]),
       );
     }
-    print(skillsWidgetList);
+    
+    */
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile'),
@@ -49,10 +120,14 @@ class _editProfileState extends State<editProfile> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               Student me = snapshot.data!;
-            }
-            return Container(
-              child: Column(children: [
-                ListView(
+              skillsList = me.skills;
+              for (var i = 0; i < skillsList.length; i++) {
+                skillsWidgetList.add(
+                  SkillField(skillsList[i]),
+                );
+              }
+              return Container(
+                child: ListView(
                   padding: EdgeInsets.all(10),
                   children: [
                     Center(
@@ -86,9 +161,14 @@ class _editProfileState extends State<editProfile> {
                       height: 30,
                     ),
                     Form(
+                      key: formKey,
                       child: Column(
                         children: [
-                          editNamefield(user.First_name),
+                          editNamefield(me.First_name),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          //editBio('add your bio here'),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: heading1_text(text: "SKILLS"),
@@ -96,21 +176,66 @@ class _editProfileState extends State<editProfile> {
                           ListView.builder(
                             shrinkWrap: true,
                             itemBuilder: (_, index) => skillsWidgetList[index],
-                            itemCount: skillsWidgetList.length,
+                            itemCount: skillsList.length,
+                          ),
+                          //addNewSkillButton(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              if (formKey.currentState!.validate() == true) {
+                                formKey.currentState!.save();
+
+                                me.skills = newSkills;
+
+                                me.First_name = newName;
+                                DatabseService()
+                                    .updateProfile(me.uid, newName, newSkills);
+                              }
+                              //ShowMessage();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 50,
+                              width: 200,
+                              decoration: BoxDecoration(
+                                color: dark_black,
+                                borderRadius: BorderRadius.circular(18.0),
+                                border: Border.all(color: dark_black),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Save Profile',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontFamily: 'san fran',
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ]),
-            );
+              );
+            } else {
+              return Container();
+            }
           }),
     );
   }
 
-  Widget editNamefield(String init_name) => TextFormField(
-        initialValue: init_name,
+  Widget editBio(String bio) => TextFormField(
+        maxLines: null,
+        initialValue: bio,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontFamily: 'san fran',
@@ -120,7 +245,7 @@ class _editProfileState extends State<editProfile> {
               fontFamily: 'san fran',
               fontWeight: FontWeight.bold,
               color: Colors.black),
-          labelText: 'Your Name',
+          labelText: 'Your bio',
           fillColor: Colors.black,
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
@@ -132,14 +257,14 @@ class _editProfileState extends State<editProfile> {
         ),
         validator: (value) {
           if (value!.length < 3) {
-            return 'Name is too short';
+            return 'Your bio is too short !';
           } else {
-            return null;
+            return '';
           }
         },
         onChanged: (value) {
           setState(() {
-            newName = value;
+            newBio = value;
           });
         },
       );
@@ -158,7 +283,7 @@ class _editProfileState extends State<editProfile> {
               fontFamily: 'san fran',
               fontWeight: FontWeight.bold,
               color: Colors.black),
-          labelText: 'Your Name',
+          labelText: 'Skill',
           fillColor: Colors.black,
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
@@ -175,15 +300,19 @@ class _editProfileState extends State<editProfile> {
             return null;
           }
         },
-        onChanged: (value) {
-          setState(() {
-            newSkills.add(value);
-          });
+        onSaved: (value) {
+          if (this.mounted) {
+            setState(() {
+              newSkills.add(value!);
+            });
+          }
         },
       ),
     );
   }
 }
+
+
 
 /*
 Widget BigButton() {

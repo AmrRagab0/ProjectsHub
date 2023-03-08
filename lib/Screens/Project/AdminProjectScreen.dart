@@ -31,8 +31,8 @@ class _AdminProjectScreenState extends State<AdminProjectScreen> {
     List<Widget> memberWidgets = [];
     for (var i in curr_project.member_role) {
       //print("image : ${i['Profile_image']}");
-      memberWidgets
-          .add(ProjectMember(i['First_name'], i['Profile_image'], i['Role']));
+      memberWidgets.add(ProjectMember(
+          i['First_name'], i['uid'], i['Profile_image'], i['Role'], context));
     }
     return Container(
       padding: EdgeInsets.only(bottom: 10, top: 10),

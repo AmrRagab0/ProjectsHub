@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:projectshub1/Classes/Student.dart';
+import 'package:projectshub1/Screens/Profile/editProfile.dart';
 import 'package:projectshub1/Services/database.dart';
 import 'package:projectshub1/animation/loading.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,10 @@ import '../Profile/ProfileScreen.dart';
 import 'components.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+
+enum Menuvalues {
+  editProfile,
+}
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -27,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final user = Provider.of<Student?>(context);
+    //print('im tired: ${user!.skills}');
 
     const blackA = Colors.black;
     return Scaffold(
@@ -34,27 +40,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text('Profile'),
         centerTitle: true,
         backgroundColor: Colors.black,
+        actions: [
+          PopupMenuButton<Menuvalues>(
+            itemBuilder: ((context) => [
+                  PopupMenuItem(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.edit,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            "Edit Profile",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    value: Menuvalues.editProfile,
+                  ),
+                ]),
+            onSelected: ((value) {
+              switch (value) {
+                case Menuvalues.editProfile:
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => editProfile()),
+                  );
+                  break;
+              }
+            }),
+          ),
+        ],
       ),
       body: StreamBuilder<Student>(
-        stream: DatabseService(St_uid: user!.uid).studentStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            Student me = snapshot.data!;
+          stream: DatabseService(St_uid: user!.uid).studentStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Student me = snapshot.data!;
 
-            return SlidingUpPanel(
-              minHeight: screenHeight * 0.6,
-              maxHeight: screenHeight * 0.8,
-              body: buildTop(me, blackA),
-              panelBuilder: (controller) => buildHeader(controller, me),
-              parallaxEnabled: true,
-              parallaxOffset: 0.5,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
+              return SlidingUpPanel(
+                minHeight: screenHeight * 0.5,
+                maxHeight: screenHeight * 0.7,
+                body: buildTop(me, blackA),
+                panelBuilder: (controller) => buildHeader(controller, me),
+                parallaxEnabled: true,
+                parallaxOffset: 0.5,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              );
+            } else {
+              return Container();
+            }
+          }),
     );
   }
 

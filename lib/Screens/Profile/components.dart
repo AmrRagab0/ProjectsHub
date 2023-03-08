@@ -52,7 +52,7 @@ Widget profilePicture(imagePath) {
   );
 }
 
-Widget Block(String header, List<String> items) {
+Widget Block(String header, List<dynamic> items) {
   List<Widget> list = [];
   for (var i = 0; i < items.length; i++) {
     list.add(heading2_text(items[i]));
@@ -90,7 +90,7 @@ Widget _oneSkill(String skill) {
           style: TextStyle(
               fontFamily: 'san fran',
               fontSize: 15,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.normal),
         )
       ],
     ),

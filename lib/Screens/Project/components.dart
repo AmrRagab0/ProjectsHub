@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:projectshub1/Screens/Profile/ProfileScreen.dart';
+import 'package:projectshub1/Screens/Profile/showProfile.dart';
 import 'package:projectshub1/Services/database.dart';
 import '../../Classes/request.dart';
 import '../../Classes/Student.dart';
@@ -119,19 +121,23 @@ Widget PositionNeeded(
         SizedBox(
           width: 10,
         ),
-        Text(
-          positionName,
-          style: TextStyle(
+        Expanded(
+          flex: 2,
+          child: Text(
+            "${positionName[0].toUpperCase()}${positionName.substring(1).toLowerCase()}",
+            style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 18,
+              fontSize: 17,
               color: Colors.black,
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         Expanded(
-          child: SizedBox(),
+          flex: 1,
+          child: roundedButton(text, positionName, st, proj_id, proj_name,
+              proj_owner_id, context),
         ),
-        roundedButton(
-            text, positionName, st, proj_id, proj_name, proj_owner_id, context),
       ],
     ),
   );
@@ -157,6 +163,7 @@ Widget roundedButton(
           rid: uuid.v4(),
           stu_name: st.First_name,
           proj_id: proj_id,
+          created_on: DateTime.now(),
           proj_owner_id: proj_owner_id,
           proj_name: proj_name,
           req_status: status.wait_to_join,
@@ -214,7 +221,7 @@ Widget roundedButton(
 
 Widget adminPositionsNeeded(String positionName, String text) {
   return Padding(
-    padding: EdgeInsets.only(top: 5, bottom: 5),
+    padding: const EdgeInsets.all(6.0),
     child: Row(
       children: [
         Icon(
@@ -224,21 +231,22 @@ Widget adminPositionsNeeded(String positionName, String text) {
         SizedBox(
           width: 10,
         ),
-        Flexible(
-          fit: FlexFit.tight, // FUCK, IT FINALLY WORKS
+        Expanded(
+          flex: 2,
           child: Text(
-            positionName,
+            "${positionName[0].toUpperCase()}${positionName.substring(1).toLowerCase()}",
             style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 18,
-                color: Colors.black,
-                fontWeight: FontWeight.bold),
+              fontFamily: 'Roboto',
+              fontSize: 17,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         Expanded(
-          child: SizedBox(),
+          flex: 1,
+          child: flexRoundButton(text),
         ),
-        flexRoundButton(text),
       ],
     ),
   );
@@ -267,28 +275,48 @@ Widget flexRoundButton(String text) {
   );
 }
 
-Widget ProjectMember(String name, String img_url, String PositionName) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 1.0, top: 5, bottom: 5, right: 5),
-    child: Row(
-      children: [
-        CircleAvatar(
-          radius: 15,
-          backgroundImage: NetworkImage(img_url),
+Widget ProjectMember(String name, String id, String img_url,
+    String PositionName, BuildContext context) {
+  return GestureDetector(
+    onTap: () async {
+      var student = await DatabseService().getStudentbyId(id);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext Context) => showProfile(student),
         ),
-        SizedBox(
-          width: 9,
-        ),
-        MemberText(name),
-        Expanded(child: SizedBox()),
-        MemberPosition(PositionName),
-      ],
+      );
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(left: 1.0, top: 5, bottom: 5, right: 5),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 15,
+            backgroundImage: NetworkImage(img_url),
+          ),
+          SizedBox(
+            width: 9,
+          ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: MemberText(name),
+                ),
+                MemberPosition(PositionName),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
 
 Widget MemberText(String text) {
-  return Text(text,
+  return Text("${text[0].toUpperCase()}${text.substring(1).toLowerCase()}",
       style: TextStyle(
         fontFamily: 'san fran',
         fontSize: 15,

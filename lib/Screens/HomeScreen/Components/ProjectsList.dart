@@ -24,10 +24,11 @@ class ProjectList extends StatefulWidget {
 class _ProjectListState extends State<ProjectList> {
   @override
   Widget build(BuildContext context) {
-    final All_projects = Provider.of<List<Project>>(context);
-
-    All_projects.sort((a, b) => a.created_on.compareTo(b.created_on));
-    print('all projects:${All_projects}');
+    final All_projects_rand = Provider.of<List<Project>>(context);
+    List<Project> All_projects;
+    All_projects_rand.sort((a, b) => a.created_on.compareTo(b.created_on));
+    All_projects = All_projects_rand.reversed.toList();
+    //print('all projects:${All_projects}');
 
     return ListView.builder(
       padding: EdgeInsets.only(bottom: 150),

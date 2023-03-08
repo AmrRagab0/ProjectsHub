@@ -20,9 +20,11 @@ class MyProjectsList extends StatefulWidget {
 class _MyProjectsListState extends State<MyProjectsList> {
   @override
   Widget build(BuildContext context) {
-    final All_projects = Provider.of<List<Project>>(context);
+    final All_projects_rand = Provider.of<List<Project>>(context);
 
-    All_projects.sort((a, b) => a.created_on.compareTo(b.created_on));
+    List<Project> All_projects;
+    All_projects_rand.sort((a, b) => a.created_on.compareTo(b.created_on));
+    All_projects = All_projects_rand.reversed.toList();
     List<Project> MyProjects = [];
     final user = Provider.of<Student?>(context);
 
@@ -33,7 +35,8 @@ class _MyProjectsListState extends State<MyProjectsList> {
           Student me = snapshot.data!;
           for (var p in All_projects) {
             //print('comparing ${me.current_projects} and ${p.pid}');
-            if (user.uid == p.p_owner) {
+            if (user.uid == p.p_owner ||
+                p.member_role.any((map) => map.containsValue(user.uid))) {
               if (MyProjects.contains(p) != true) {
                 MyProjects.add(p);
                 //print('added');
@@ -44,6 +47,7 @@ class _MyProjectsListState extends State<MyProjectsList> {
           MyProjects.toList().toSet();
           //print('current :${MyProjects}');
           return ListView.builder(
+            padding: EdgeInsets.only(bottom: 150),
             itemBuilder: (context, index) {
               return Project_card(theProject: MyProjects[index]);
             },

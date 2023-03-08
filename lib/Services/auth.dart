@@ -10,6 +10,7 @@ class AuthService {
 
   // creating a custom student from a firebase user
   Student? _studentFromFirbaseUser(User user) {
+    //print(user);
     return user != null
         ? Student(
             uid: user.uid,
@@ -18,6 +19,7 @@ class AuthService {
             Email_address: user.email!,
             Profile_image: user.photoURL!,
             current_projects: [],
+            skills: [],
           )
         : null;
   }
@@ -74,6 +76,7 @@ class AuthService {
         result.user!.photoURL!,
         <String>[],
       );
+      print('data: ${result.user!.email}');
 
       return _studentFromFirbaseUser(result.user!);
     } else {
@@ -107,8 +110,8 @@ class AuthService {
         result.user!.photoURL!, <String>[]);
     return _studentFromFirbaseUser(result.user!);
   }
-  */
 
+*/
   // sign up
   Future Register(String email, String password) async {
     try {

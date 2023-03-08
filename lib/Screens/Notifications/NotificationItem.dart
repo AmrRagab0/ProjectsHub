@@ -11,6 +11,7 @@ import 'package:projectshub1/Services/database.dart';
 import 'package:projectshub1/variables.dart';
 import 'package:provider/provider.dart';
 import '../../Classes/Student.dart';
+import '../Profile/showProfile.dart';
 import './components.dart';
 
 //enum status { Accepted, Rejected, wait_to_join }
@@ -34,8 +35,8 @@ class _NotifItemState extends State<NotifItem> {
   }
 
   String formulate_notif(request req, String uid) {
-    print(
-        '${req.position_name} have stuid:${req.Stuid}  and owner:${req.proj_owner_id}');
+    //print(
+    //  '${req.position_name} have stuid:${req.Stuid}  and owner:${req.proj_owner_id}');
     if (req.req_status.toString() == 'status.wait_to_join' &&
         req.Stuid != uid) {
       message =
@@ -53,7 +54,7 @@ class _NotifItemState extends State<NotifItem> {
         message =
             "We are sorry, Project : ${req.proj_name} is not suitable for you";
       } else {
-        print('wtf');
+        //print('wtf');
         message =
             'You REJECTED ${req.stu_name} as ${req.position_name} in your Project:${req.proj_name}';
       }
@@ -69,7 +70,7 @@ class _NotifItemState extends State<NotifItem> {
     final user = Provider.of<Student?>(context);
 
     final message = formulate_notif(widget.Req, user!.uid);
-    print('message :${message}');
+    //print('message :${message}');
     if ((widget.Req.req_status.toString() == 'status.wait_to_join' ||
             widget.Req.req_status.toString() == 'status.Accepted') &&
         widget.Req.Stuid == user.uid) {
@@ -97,13 +98,16 @@ class _NotifItemState extends State<NotifItem> {
     } else {
       return Container(
         //height: 80,
-        child: AcceptCancelWidget(
-          img_path: img_path,
-          message: message,
-          req: widget.Req,
-          onbuttonpressed: updateStatus,
-          UserId: user.uid,
-          newSt: widget.Req.req_status,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          child: AcceptCancelWidget(
+            img_path: img_path,
+            message: message,
+            req: widget.Req,
+            onbuttonpressed: updateStatus,
+            UserId: user.uid,
+            newSt: widget.Req.req_status,
+          ),
         ),
       );
     }
@@ -153,16 +157,25 @@ class _AcceptCancelWidgetState extends State<AcceptCancelWidget> {
     }
 
     if (show_buttons) {
-      return button_widget();
+      return button_widget(widget.req.Stuid);
     } else {
       return Buttonless_widget(
           accepted, widget.req.Stuid, widget.req.proj_owner_id, elmessage);
     }
   }
 
-  Widget button_widget() {
+  Widget button_widget(String id) {
     return ListTile(
-      onTap: () {},
+      onTap: () async {
+        Student st = await DatabseService().getStudentbyId(id);
+        print('student is : ${st}');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext Context) => showProfile(st),
+          ),
+        );
+      },
       enabled: true,
       leading: Container(
         padding: EdgeInsets.all(5),
